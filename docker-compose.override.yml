@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  orderservice.host:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  db:
+    environment:
+      POSTGRES_PASSWORD: Order@2020

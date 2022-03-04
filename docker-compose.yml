@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  orderservice.host:
+    image: ${DOCKER_REGISTRY-}orderservicehost
+    build:
+      context: .
+      dockerfile: src/OrderService.Host/Dockerfile
+    networks:
+      - backend
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+       - backend
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: my-rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+       - backend
+networks:
+  backend:
+     driver: bridge
