@@ -1,6 +1,7 @@
 
-docker-compose -p order-service-dev up --build --detach
+**Start Docker Compose For Local Development And For Running Integration Test Locally**
 
+docker-compose -p order-service-dev up --build --detach
 
 Commands EF:
 
