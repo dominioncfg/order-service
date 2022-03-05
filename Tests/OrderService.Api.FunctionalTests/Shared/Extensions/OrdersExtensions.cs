@@ -4,28 +4,27 @@ using OrderService.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace OrderService.Api.FunctionalTests.Shared
-{
-    public static class OrdersExtensions
-    {
-        public static async Task AssumeOrderInRepository(this TestServerFixture fixture, Order model)
-        {
-            await fixture.ExecuteScopeAsync(async services =>
-            {
-                var searchRepo = services.GetRequiredService<IOrdersRepository>();
-                await searchRepo.AddAsync(model, default);
-            });
-        }
+namespace OrderService.Api.FunctionalTests.Shared;
 
-        public static async Task<List<Order>> GetAllOrdersInRepository(this TestServerFixture fixture)
+public static class OrdersExtensions
+{
+    public static async Task AssumeOrderInRepository(this TestServerFixture fixture, Order model)
+    {
+        await fixture.ExecuteScopeAsync(async services =>
         {
-            var orders = new List<Order>();
-            await fixture.ExecuteScopeAsync(async services =>
-            {
-                var searchRepo = services.GetRequiredService<IOrdersRepository>();
-                orders = await searchRepo.GetAllAsync(default);
-            });
-            return orders;
-        }
+            var searchRepo = services.GetRequiredService<IOrdersRepository>();
+            await searchRepo.AddAsync(model, default);
+        });
+    }
+
+    public static async Task<List<Order>> GetAllOrdersInRepository(this TestServerFixture fixture)
+    {
+        var orders = new List<Order>();
+        await fixture.ExecuteScopeAsync(async services =>
+        {
+            var searchRepo = services.GetRequiredService<IOrdersRepository>();
+            orders = await searchRepo.GetAllAsync(default);
+        });
+        return orders;
     }
 }

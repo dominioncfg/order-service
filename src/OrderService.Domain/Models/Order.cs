@@ -4,31 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OrderService.Domain
+namespace OrderService.Domain;
+
+public class Order : AggregateRoot
 {
-    public class Order : AggregateRoot
+    private readonly List<OrderItem> items = new();
+
+    public IReadOnlyList<OrderItem> Items => items.ToList();
+
+    protected Order() { }
+
+    public Order(Guid id, OrderItem[] orderItems) : base(id)
     {
-        private List<OrderItem> items = new();
+        foreach (var item in orderItems)
+            AddOrderItem(item);
 
-        public IReadOnlyList<OrderItem> Items => items.ToList();
-
-        protected Order() { }
-
-        public Order(Guid id, OrderItem[] orderItems) : base(id)
+        AddDomainEvent(new OrderCreatedDomainEvent()
         {
-            foreach (var item in orderItems)
-                AddOrderItem(item);
+            OrderId = id,
+            Items = Items.Select(x => new OrderItemDto(x.Sku, x.Quantity)).ToArray()
+        });
+    }
 
-            AddDomainEvent(new OrderCreatedDomainEvent()
-            {
-                OrderId = id,
-                Items = Items.Select(x => new OrderItemDto(x.Sku, x.Quantity)).ToArray()
-            });
-        }
-
-        private void AddOrderItem(OrderItem order)
-        {
-            items.Add(order);
-        }
+    private void AddOrderItem(OrderItem order)
+    {
+        items.Add(order);
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace OrderService.Api.Configuration
+namespace OrderService.Api.Configuration;
+
+internal static class AutomapperConfiguration
 {
-    internal static class AutomapperConfiguration
+    public static IServiceCollection AddCustomAutomapper(this IServiceCollection services)
     {
-        public static IServiceCollection AddCustomAutomapper(this IServiceCollection services)
-        {
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            return services;
-        }
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        return services;
     }
 }
