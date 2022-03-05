@@ -30,7 +30,7 @@ internal static class ApiExceptionHandlers
         };
     }
 
-    public static ProblemDetails BadRequestExceptionHandler(BadRequestApplicatonException ex)
+    public static ProblemDetails BadRequestExceptionHandler(BadRequestApplicationException ex)
     {
         return new ValidationProblemDetails()
         {

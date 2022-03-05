@@ -1,4 +1,4 @@
-﻿using OrderService.Domain;
+﻿using OrderService.Domain.Orders;
 
 namespace OrderService.Api.FunctionalTests.Shared;
 

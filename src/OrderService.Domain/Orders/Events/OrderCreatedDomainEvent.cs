@@ -1,7 +1,7 @@
 ﻿using OrderService.Domain.Seedwork;
 using System;
 
-namespace OrderService.Domain.Events;
+namespace OrderService.Domain.Orders;
 
 public record OrderCreatedDomainEvent : IDomainEvent
 {

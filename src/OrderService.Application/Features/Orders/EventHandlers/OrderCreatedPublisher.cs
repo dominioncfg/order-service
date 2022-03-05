@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using OrderService.Contracts;
-using OrderService.Domain.Events;
+using OrderService.Domain.Orders;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ namespace OrderService.Application.Features.Orders;
 
 public class OrderCreatedPublisher : INotificationHandler<OrderCreatedDomainEvent>
 {
+    //TODO: We could abstract MassTransit if we wanted to:
     private readonly IPublishEndpoint _publishEndpoint;
 
     public OrderCreatedPublisher(IPublishEndpoint publishEndpoint)

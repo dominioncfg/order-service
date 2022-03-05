@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
 
 namespace OrderService.Infrastructure;
 

@@ -1,10 +1,9 @@
-﻿using OrderService.Domain.Events;
-using OrderService.Domain.Seedwork;
+﻿using OrderService.Domain.Seedwork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OrderService.Domain;
+namespace OrderService.Domain.Orders;
 
 public class Order : AggregateRoot
 {

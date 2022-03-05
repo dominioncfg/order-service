@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,14 +27,5 @@ public class OrdersRepository : IOrdersRepository
             .Orders
             .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-    }
-
-    public async Task<List<Order>> GetAllAsync(CancellationToken cancellationToken)
-    {
-        return await _ordersDbContext
-          .Orders
-          .Include(x => x.Items)
-          .ToListAsync(cancellationToken);
-    }
-
+    }   
 }

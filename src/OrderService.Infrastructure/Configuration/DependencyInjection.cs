@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
 using OrderService.Infrastructure.Repositories;
 using System.Threading.Tasks;
 

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
 using OrderService.Domain.Seedwork;
 using System;
 using System.Linq;

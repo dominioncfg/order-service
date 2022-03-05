@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OrderService.Api.FunctionalTests.SeedWork;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
+using OrderService.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,8 +24,12 @@ public static class OrdersExtensions
         var orders = new List<Order>();
         await fixture.ExecuteScopeAsync(async services =>
         {
-            var searchRepo = services.GetRequiredService<IOrdersRepository>();
-            orders = await searchRepo.GetAllAsync(default);
+            var ordersDbContext = services.GetRequiredService<OrdersDbContext>();
+
+            orders = await ordersDbContext
+                .Orders
+                .Include(x => x.Items)
+                .ToListAsync(default);
         });
         return orders;
     }

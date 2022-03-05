@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OrderService.Application.Common.Exceptions;
 
-public class ValidationException : OrderServiceApplicatonException
+public class ValidationException : OrderServiceApplicationException
 {
     public IDictionary<string, string[]> Errors { get; }
     public ValidationException()

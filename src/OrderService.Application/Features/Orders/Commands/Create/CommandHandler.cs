@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using OrderService.Application.Common.Exceptions;
-using OrderService.Domain;
+using OrderService.Domain.Orders;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -37,6 +37,6 @@ public record CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand>
         var existingOrder = await _ordersRepository.GetByIdOrDefaultAsync(orderId, cancellationToken);
 
         if (existingOrder is not null)
-            throw new BadRequestApplicatonException("Order Already exist.");
+            throw new BadRequestApplicationException("Order Already exist.");
     }
 }

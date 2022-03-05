@@ -1,4 +1,4 @@
-﻿using OrderService.Domain;
+﻿using OrderService.Domain.Orders;
 using System;
 using System.Collections.Generic;
 
