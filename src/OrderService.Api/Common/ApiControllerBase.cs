@@ -10,8 +10,8 @@ namespace OrderService.Api.Common;
 [Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
-    private ISender _mediator;
-    private IMapper _mapper;
+    private ISender? _mediator;
+    private IMapper? _mapper;
     protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>() ?? throw new System.Exception("Mediator is Required");
     protected IMapper Mapper => _mapper ??= HttpContext.RequestServices.GetService<IMapper>() ?? throw new System.Exception("Mapper is Required");
 }

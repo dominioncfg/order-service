@@ -6,3 +6,13 @@ docker-compose -p order-service-dev up --build --detach
 Commands EF:
 
 dotnet ef migrations add InitialIdenityMigration --project src\OrderService.Infrastructure  --startup-project src\OrderService.Host -c OrdersDbContext -o Migrations
+
+
+ToDo:
+
+	- Add Query By id  and get all with Dapper
+	- Improve Domain layer and Domain UnitTest
+	- Add Consumer
+	- Add Readme
+	- Add Continous Integration
+	- Add Delete & Update?

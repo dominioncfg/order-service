@@ -26,6 +26,7 @@ internal static class ProblemDetailsConfiguration
             opts.IncludeExceptionDetails = (_, __) => false;
             opts.Map<ValidationException>(ApiExceptionHandlers.FluentValidationExceptionHandler);
             opts.Map<BadRequestApplicationException>(ApiExceptionHandlers.BadRequestExceptionHandler);
+            opts.Map<EntityNotFoundApplicationException>(ApiExceptionHandlers.EntityNotFoundExceptionHandler);
             opts.Map<Exception>(ex => ApiExceptionHandlers.UnhandledExceptionHandler(ex));
         });
         return services;

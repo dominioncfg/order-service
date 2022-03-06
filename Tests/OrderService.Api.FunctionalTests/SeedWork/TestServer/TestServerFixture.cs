@@ -14,8 +14,8 @@ namespace OrderService.Api.FunctionalTests.SeedWork;
 public sealed class TestServerFixture : IDisposable
 {
     public TestServer Server { get; }
-    private static TestServerFixture FixtureInstance { get; set; }
-    public static BusTestPublishObserver CurrentTestPublishedEvents { get; private set; }
+    private static TestServerFixture? FixtureInstance { get; set; }
+    public static BusTestPublishObserver? CurrentTestPublishedEvents { get; private set; }
 
     public TestServerFixture()
     {
@@ -86,7 +86,7 @@ public sealed class TestServerFixture : IDisposable
     private static async Task OnTestInitResetPublishedEvents()
     {
         //TODO: Not the best way of integration test with Mass Transit
-        await FixtureInstance.ExecuteScopeAsync(services =>
+        await FixtureInstance!.ExecuteScopeAsync(services =>
         {
             var testHarness = services.GetRequiredService<InMemoryTestHarness>();
             CurrentTestPublishedEvents = new BusTestPublishObserver(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2), default);
@@ -97,7 +97,7 @@ public sealed class TestServerFixture : IDisposable
 
     private static async Task OnTestInitResetPostgresDb()
     {
-        await FixtureInstance.ExecuteScopeAsync(async services =>
+        await FixtureInstance!.ExecuteScopeAsync(async services =>
         {
             var dataStorage = services.GetRequiredService<OrdersDbContext>();
             await dataStorage.ClearDatabaseBeforeTestAsync();

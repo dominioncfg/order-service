@@ -21,5 +21,5 @@ public class CreateOrderRequestBuilder
         return this;
     }
 
-    public CreateOrderRequest Build() => new() { Id = id, Items = items };
+    public CreateOrderApiRequest Build() => new() { Id = id, Items = items };
 }

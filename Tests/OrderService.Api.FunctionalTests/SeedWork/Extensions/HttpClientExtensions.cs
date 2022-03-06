@@ -10,6 +10,23 @@ namespace OrderService.Api.FunctionalTests.SeedWork;
 
 public static class HttpClientExtensions
 {
+    public static async Task GetAndExpectNotFoundAsync(this HttpClient client, string url)
+    {
+        var response = await client.GetAsync(url);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    public static async Task<T> GetAsync<T>(this HttpClient client, string url)
+    {
+        using var getResponse = await client.GetAsync(url);
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        getResponse.IsSuccessStatusCode.Should().BeTrue();
+        var responseModel = await getResponse.DeserializeAsync<T>();
+        responseModel.Should().NotBeNull();
+        return responseModel;
+    }
+
     public static async Task PostAndExpectBadRequestAsync(this HttpClient client, string url, object request)
     {
         var json = JsonSerializer.Serialize(request);

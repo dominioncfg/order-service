@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using OrderService.Domain.Orders;
+using OrderService.Infrastructure.DbQueries;
+using OrderService.Infrastructure.Queries;
 using OrderService.Infrastructure.Repositories;
 using System.Threading.Tasks;
 
@@ -14,7 +17,8 @@ public static class DependencyInjection
     {
         return services
             .AddDbContext(configuration)
-            .AddRepositories();
+            .AddRepositories()
+            .AddQueries(configuration);
     }
 
     public static IApplicationBuilder UseInfraestructure(this IApplicationBuilder app)
@@ -25,14 +29,22 @@ public static class DependencyInjection
 
     private static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var something = configuration.GetConnectionString("OrdersDb");
-        IServiceCollection serviceCollection = services.AddDbContext<OrdersDbContext>(options => options.UseNpgsql(something));
+        var connectionString = configuration.GetConnectionString("OrdersDb");
+        IServiceCollection serviceCollection = services.AddDbContext<OrdersDbContext>(options => options.UseNpgsql(connectionString));
         return services;
     }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IOrdersRepository, OrdersRepository>();
+        return services;
+    }
+
+    private static IServiceCollection AddQueries(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("OrdersDb");
+        services.AddScoped<IOrdersDbQuery, OrdersDbQuery>(opts => new OrdersDbQuery(new NpgsqlConnection(connectionString))); 
+        services.AddTransient<IOrdersQueries, OrdersQueries>();
         return services;
     }
 

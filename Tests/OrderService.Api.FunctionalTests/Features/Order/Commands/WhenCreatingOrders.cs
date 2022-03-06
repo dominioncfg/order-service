@@ -124,7 +124,9 @@ public class WhenCreatingOrders
 
         var ordersInDb = await Given.GetAllOrdersInRepository();
         ordersInDb.Should().NotBeNull().And.HaveCount(2);
-        AssertOrderFromRequest(ordersInDb.FirstOrDefault(x => x.Id == request.Id), request);
+        var theOrder = ordersInDb.FirstOrDefault(x => x.Id == request.Id);
+        theOrder.Should().NotBeNull();
+        AssertOrderFromRequest(theOrder!, request);
     }
 
     [Fact]
@@ -185,7 +187,7 @@ public class WhenCreatingOrders
         events.Should().NotBeNull().And.BeEmpty();
     }
 
-    private static void AssertOrderFromRequest(Order actual, CreateOrderRequest expected)
+    private static void AssertOrderFromRequest(Order actual, CreateOrderApiRequest expected)
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
@@ -194,11 +196,11 @@ public class WhenCreatingOrders
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
             corresponding.Should().NotBeNull();
-            item.Quantity.Should().Be(corresponding.Quantity);
+            item.Quantity.Should().Be(corresponding!.Quantity);
         }
     }
 
-    private static void AssertEventFromRequet(OrderCreatedIntegrationEvent actual, CreateOrderRequest expected)
+    private static void AssertEventFromRequet(OrderCreatedIntegrationEvent actual, CreateOrderApiRequest expected)
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
@@ -207,7 +209,7 @@ public class WhenCreatingOrders
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
             corresponding.Should().NotBeNull();
-            item.Quantity.Should().Be(corresponding.Quantity);
+            item.Quantity.Should().Be(corresponding!.Quantity);
         }
     }
 

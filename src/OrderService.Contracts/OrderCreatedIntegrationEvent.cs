@@ -10,8 +10,8 @@ public class OrderCreatedIntegrationEvent
 
     public OrderCreatedIntegrationEvent(Guid id, OrderCreatedOrderItemDto[] items)
     {
-        this.Id = id;
-        this.Items = items;
+        Id = id;
+        Items = items;
     }
 }
 

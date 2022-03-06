@@ -13,10 +13,13 @@ public class OrdersDbContext : DbContext
 {
     public DbSet<Order> Orders { get; set; }
     public readonly IMediator _mediator;
+
+#nullable disable
     public OrdersDbContext(DbContextOptions<OrdersDbContext> options, IMediator mediator) : base(options)
     {
         _mediator = mediator;
     }
+#nullable enable
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

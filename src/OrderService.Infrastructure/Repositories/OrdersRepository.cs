@@ -21,7 +21,7 @@ public class OrdersRepository : IOrdersRepository
         //For more complex scenarios instead of using this we can call this from  a UnitOfWork
         await _ordersDbContext.SaveChangesAsync(cancellationToken);
     }
-    public async Task<Order> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Order?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _ordersDbContext
             .Orders

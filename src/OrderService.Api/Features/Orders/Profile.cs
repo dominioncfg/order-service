@@ -8,11 +8,13 @@ public class OrdersControllerProfile : Profile
 {
     public OrdersControllerProfile()
     {
-        CreateMap<CreateOrderRequest, CreateOrderCommand>()
-            .ForMember(x => x.Items, opt => opt.MapFrom(x => x.Items.Select(y => new CreateOrderItem()
+        CreateMap<CreateOrderApiRequest, CreateOrderCommand>()
+            .ForMember(x => x.Items, opt => opt.MapFrom(x => x.Items.Select(y => new CreateOrderCommandItem()
             {
                 Sku = y.Key,
                 Quantity = y.Value,
             }).ToArray()));
+        CreateMap<GetOrderByIdQueryResponse, GetOrderByIdQueryApiResponse>();
+        CreateMap<GetOrderByIdOrderItemQueryResponse, GetOrderByIdOrderItemQueryApiResponse>();
     }
 }

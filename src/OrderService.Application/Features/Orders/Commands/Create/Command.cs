@@ -6,12 +6,12 @@ namespace OrderService.Application.Features.Orders;
 public record CreateOrderCommand : IRequest
 {
     public Guid Id { get; init; }
-    public CreateOrderItem[] Items { get; init; } = Array.Empty<CreateOrderItem>();
+    public CreateOrderCommandItem[] Items { get; init; } = Array.Empty<CreateOrderCommandItem>();
 }
 
-public record CreateOrderItem
+public record CreateOrderCommandItem
 {
-    public string Sku { get; init; }
+    public string Sku { get; init; } = string.Empty; 
 
     public decimal Quantity { get; init; }
 }

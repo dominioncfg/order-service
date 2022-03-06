@@ -9,6 +9,9 @@ internal static class ApiExceptionHandlers
 {
     private static string UnhandledExceptionTitle => "Whoops. Something went wrong";
     private static string ValidationExceptionTitle => "One or more validation failures have occurred.";
+    private static string BadRequestExceptionTitle => "Looks like there is something wrong with your request.";
+    private static string NotFoundExceptionTitle => "Entity Not Found";
+
 
     public static ProblemDetails UnhandledExceptionHandler(Exception ex)
     {
@@ -36,7 +39,17 @@ internal static class ApiExceptionHandlers
         {
             Detail = ex.Message,
             Status = StatusCodes.Status400BadRequest,
-            Title = ValidationExceptionTitle,
+            Title = BadRequestExceptionTitle,
+        };
+    }
+
+    public static ProblemDetails EntityNotFoundExceptionHandler(EntityNotFoundApplicationException ex)
+    {
+        return new ValidationProblemDetails()
+        {
+            Detail = ex.Message,
+            Status = StatusCodes.Status404NotFound,
+            Title = NotFoundExceptionTitle,
         };
     }
 }

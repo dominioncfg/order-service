@@ -4,7 +4,7 @@ namespace OrderService.Api.FunctionalTests.Shared;
 
 public class OrderItemBuilder
 {
-    private string sku;
+    private string sku = string.Empty;
     private decimal quantity;
 
     public OrderItemBuilder WithSku(string sku)

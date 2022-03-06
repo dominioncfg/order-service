@@ -13,15 +13,19 @@ public class OrdersController : ApiControllerBase
 {
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync([FromBody] CreateOrderRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> CreateAsync([FromBody] CreateOrderApiRequest request, CancellationToken cancellationToken)
     {
         var command = Mapper.Map<CreateOrderCommand>(request);
         await Mediator.Send(command, cancellationToken);
-        return Created(GetOrderByIdUrl(command.Id), new { });
+        return CreatedAtAction("GetById", new { });
     }
 
-    private static string GetOrderByIdUrl(Guid id)
+    [HttpGet("{id}")]
+    public async Task<GetOrderByIdQueryApiResponse> GetByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        return $"api/orders/{id}";
+        var query = new GetOrderByIdQuery() { Id = id };
+        var queryResponse = await Mediator.Send(query, cancellationToken);
+        var response = Mapper.Map<GetOrderByIdQueryApiResponse>(queryResponse);
+        return response;
     }
 }
