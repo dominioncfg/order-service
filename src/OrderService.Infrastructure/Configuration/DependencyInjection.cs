@@ -30,7 +30,11 @@ public static class DependencyInjection
     private static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("OrdersDb");
-        IServiceCollection serviceCollection = services.AddDbContext<OrdersDbContext>(options => options.UseNpgsql(connectionString));
+        IServiceCollection serviceCollection = services.AddDbContext<OrdersDbContext>(options => 
+            options
+                .UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention()
+            );
         return services;
     }
 
@@ -58,7 +62,7 @@ public static class DependencyInjection
 
     private static async Task MigrateOrdersDatabaseAsync(IServiceScope serviceScope)
     {
-        //Not recomended for production
+        //Not recomended for production, is best to use CI-CD for this
         await serviceScope.ServiceProvider.GetRequiredService<OrdersDbContext>().Database.MigrateAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using OrderService.Domain.Orders;
+﻿using EFCore.NamingConventions.Internal;
+using OrderService.Domain.Orders;
 using OrderService.Infrastructure.DbQueries;
 using System;
 using System.Threading;
@@ -8,6 +9,7 @@ namespace OrderService.Infrastructure.Queries;
 public class OrdersQueries : IOrdersQueries
 {
     private readonly IOrdersDbQuery _dbQuery;
+    
 
     public OrdersQueries(IOrdersDbQuery dbQuery)
     {
@@ -17,19 +19,18 @@ public class OrdersQueries : IOrdersQueries
 
     public async Task<GetOrderByIdResponse?> GetOrderIdOrDefaultAsync(Guid orderId, CancellationToken cancellationToken)
     {
+        const string getByIdSql = @$"
+        SELECT 
+            id
+        FROM  core.orders 
+        WHERE id = @OrderId;
+        SELECT 
+            sku,
+            quantity
+        FROM core.order_items
+        WHERE order_id = @OrderId;";
         var queryParams = new { OrderId = orderId };
-        var sql = @$"
-        SELECT 
-            {nameof(Order.Id).ToPostgreSQLQueryIdentifier()}
-        FROM  {EntityFrameworkConfigurationConstants.MainSchema.ToPostgreSQLQueryIdentifier()}.{EntityFrameworkConfigurationConstants.Orders.ToPostgreSQLQueryIdentifier()} 
-        WHERE {nameof(Order.Id).ToPostgreSQLQueryIdentifier()} = @{nameof(queryParams.OrderId)};
-        SELECT 
-            {nameof(OrderItem.Sku).ToPostgreSQLQueryIdentifier()},
-            {nameof(OrderItem.Quantity).ToPostgreSQLQueryIdentifier()}
-        FROM {EntityFrameworkConfigurationConstants.MainSchema.ToPostgreSQLQueryIdentifier()}.{EntityFrameworkConfigurationConstants.OrdersItems.ToPostgreSQLQueryIdentifier()} 
-        WHERE {"OrderId".ToPostgreSQLQueryIdentifier()} = @{nameof(queryParams.OrderId)};";
-
-        var response = await _dbQuery.QueryMultipleAsync<GetOrderByIdResponse, GetOrderByIdOrderItemResponse>(sql, queryParams, cancellationToken);
+        var response = await _dbQuery.QueryMultipleAsync<GetOrderByIdResponse, GetOrderByIdOrderItemResponse>(getByIdSql, queryParams, cancellationToken);
 
         if (response.Item1 is null)
             return null;
@@ -39,10 +40,4 @@ public class OrdersQueries : IOrdersQueries
             Items = response.Item2,
         };
     }
-}
-
-
-public static class SqlExtensions
-{
-    public static string ToPostgreSQLQueryIdentifier(this string originalName) => $"\"{originalName}\"";
 }
