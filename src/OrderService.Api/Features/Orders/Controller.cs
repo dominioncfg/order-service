@@ -7,17 +7,16 @@ using System.Threading.Tasks;
 
 namespace OrderService.Api.Features.Orders;
 
-
 [Route("api/orders")]
 public class OrdersController : ApiControllerBase
 {
-
-    [HttpPost]
-    public async Task<ActionResult> CreateAsync([FromBody] CreateOrderApiRequest request, CancellationToken cancellationToken)
+    [HttpGet()]
+    public async Task<GetAllOrdersQueryApiResponse> GetByIdAsync(CancellationToken cancellationToken)
     {
-        var command = Mapper.Map<CreateOrderCommand>(request);
-        await Mediator.Send(command, cancellationToken);
-        return CreatedAtAction("GetById", new { });
+        var query = new GetAllOrdersQuery();
+        var queryResponse = await Mediator.Send(query, cancellationToken);
+        var response = Mapper.Map<GetAllOrdersQueryApiResponse>(queryResponse);
+        return response;
     }
 
     [HttpGet("{id}")]
@@ -27,5 +26,13 @@ public class OrdersController : ApiControllerBase
         var queryResponse = await Mediator.Send(query, cancellationToken);
         var response = Mapper.Map<GetOrderByIdQueryApiResponse>(queryResponse);
         return response;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> CreateAsync([FromBody] CreateOrderApiRequest request, CancellationToken cancellationToken)
+    {
+        var command = Mapper.Map<CreateOrderCommand>(request);
+        await Mediator.Send(command, cancellationToken);
+        return CreatedAtAction("GetById", new { });
     }
 }

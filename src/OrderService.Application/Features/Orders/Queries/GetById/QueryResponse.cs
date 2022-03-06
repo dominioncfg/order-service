@@ -1,5 +1,4 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace OrderService.Application.Features.Orders;

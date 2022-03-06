@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using OrderService.Domain.Orders;
 
-namespace OrderService.Application.Features.Orders.Queries.GetById
+namespace OrderService.Application.Features.Orders;
+
+public class GetOrderByIdQueryProfile : Profile
 {
-    public class GetOrderByIdQueryProfile : Profile
+    public GetOrderByIdQueryProfile()
     {
-        public GetOrderByIdQueryProfile()
-        {
-            CreateMap<GetOrderByIdResponse, GetOrderByIdQueryResponse>();
-            CreateMap<GetOrderByIdOrderItemResponse, GetOrderByIdOrderItemQueryResponse>();
-        }
+        CreateMap<GetOrderByIdResponse, GetOrderByIdQueryResponse>();
+        CreateMap<GetOrderByIdOrderItemResponse, GetOrderByIdOrderItemQueryResponse>();
     }
 }

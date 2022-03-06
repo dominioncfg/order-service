@@ -2,7 +2,6 @@ using FluentAssertions;
 using OrderService.Api.Features.Orders;
 using OrderService.Api.FunctionalTests.SeedWork;
 using OrderService.Api.FunctionalTests.Shared;
-using OrderService.Contracts;
 using OrderService.Domain.Orders;
 using System;
 using System.Linq;
