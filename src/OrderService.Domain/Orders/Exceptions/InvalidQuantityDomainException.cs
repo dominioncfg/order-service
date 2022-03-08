@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OrderService.Domain.Seedwork;
+using System;
 
 namespace OrderService.Domain.Orders;
 

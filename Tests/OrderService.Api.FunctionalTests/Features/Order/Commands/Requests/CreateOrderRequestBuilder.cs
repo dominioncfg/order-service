@@ -17,7 +17,7 @@ public class CreateOrderRequestBuilder
 
     public CreateOrderRequestBuilder WithItem(Action<CreateOrderItemApiRequestBuilder> builderConfig)
     {
-        CreateOrderItemApiRequestBuilder builder = new CreateOrderItemApiRequestBuilder();
+        var builder = new CreateOrderItemApiRequestBuilder();
         builderConfig(builder);
         items.Add(builder.Build());
         return this;

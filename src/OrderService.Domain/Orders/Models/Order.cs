@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace OrderService.Domain.Orders;
 
-public class Order : AggregateRoot
+public class Order : AggregateRoot<Guid>
 {
     private readonly List<OrderItem> items = new();
 

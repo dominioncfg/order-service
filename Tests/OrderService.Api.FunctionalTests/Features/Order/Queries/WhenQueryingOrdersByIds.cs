@@ -3,6 +3,7 @@ using OrderService.Api.Features.Orders;
 using OrderService.Api.FunctionalTests.SeedWork;
 using OrderService.Api.FunctionalTests.Shared;
 using OrderService.Domain.Orders;
+using OrderService.Tests.Common.Builders;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

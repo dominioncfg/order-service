@@ -5,18 +5,13 @@ using System.Linq;
 
 namespace OrderService.Application.Features.Orders;
 
-public class RegisterCarAdCommandValidator : AbstractValidator<CreateOrderCommand>
+public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
-    public RegisterCarAdCommandValidator()
+    public CreateOrderCommandValidator()
     {
         RuleFor(v => v.Id)
             .NotEqual(Guid.Empty)
             .WithMessage("Invalid Id.");
-
-        RuleFor(v => v.Items)
-           .NotNull()
-           .NotEmpty()
-           .WithMessage("Order without any items.");
 
         RuleFor(v => v.Items)
            .NotNull()

@@ -1,8 +1,7 @@
 ﻿using OrderService.Domain.Orders;
-using System;
-using System.Collections.Generic;
 
-namespace OrderService.Api.FunctionalTests.Shared;
+
+namespace OrderService.Tests.Common.Builders;
 
 public class OrderBuilder
 {

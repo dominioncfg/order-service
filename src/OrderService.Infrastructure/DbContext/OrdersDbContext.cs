@@ -55,7 +55,7 @@ public class OrdersDbContext : DbContext
         if (_mediator == null)
             throw new NullReferenceException("Mediator is required");
 
-        var entitiesWithEvents = ChangeTracker.Entries<AggregateRoot>()
+        var entitiesWithEvents = ChangeTracker.Entries<AggregateRoot<Guid>>()
             .Select(e => e.Entity)
             .Where(e => e.DomainEvents.Any())
             .ToArray();

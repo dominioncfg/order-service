@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace OrderService.Domain.Seedwork;
 
-public abstract class AggregateRoot
+public abstract class AggregateRoot<TId> : Entity<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = new();
-
-    public virtual Guid Id { get; protected set; }
     public virtual IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
-    protected AggregateRoot() { }
-    protected AggregateRoot(Guid id)
-    {
-        Id = id;
-    }
+    protected AggregateRoot() : base() { }
+    protected AggregateRoot(TId id) : base(id) { }
 
     protected virtual void AddDomainEvent(IDomainEvent newEvent)
     {
