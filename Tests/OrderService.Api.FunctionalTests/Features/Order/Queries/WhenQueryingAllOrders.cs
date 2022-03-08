@@ -37,7 +37,7 @@ public class WhenQueryingAllOrders
     {
         var firstOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
                 .Build()
@@ -63,12 +63,12 @@ public class WhenQueryingAllOrders
     {
         var firstOrder = new OrderBuilder()
              .WithId(Guid.NewGuid())
-             .WithItem(new OrderItemBuilder()
+             .WithItem(item => item
                  .WithSku("product-sku-03")
                  .WithQuantity(2)
                  .Build()
              )
-             .WithItem(new OrderItemBuilder()
+             .WithItem(item=> item
                  .WithSku("product-sku-04")
                  .WithQuantity(3)
                  .Build()
@@ -95,7 +95,7 @@ public class WhenQueryingAllOrders
         {
             new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                 .WithSku("product-sku-01")
                 .WithQuantity(2)
                 .Build()
@@ -104,7 +104,7 @@ public class WhenQueryingAllOrders
 
             new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                 .WithSku("product-sku-02")
                 .WithQuantity(3)
                 .Build()
@@ -139,12 +139,12 @@ public class WhenQueryingAllOrders
         {
             new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                 .WithSku("product-sku-01")
                 .WithQuantity(2)
                 .Build()
             )
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                .WithSku("product-sku-02")
                .WithQuantity(3)
                .Build()
@@ -153,12 +153,12 @@ public class WhenQueryingAllOrders
 
             new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                 .WithSku("product-sku-03")
                 .WithQuantity(4)
                 .Build()
             )
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item=>item
                 .WithSku("product-sku-04")
                 .WithQuantity(5)
                 .Build()

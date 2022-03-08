@@ -7,31 +7,29 @@ namespace OrderService.Api.FunctionalTests.Shared;
 public class OrderBuilder
 {
     private Guid id;
-    private readonly List<OrderItem> items = new();
-
+    private readonly List<CreateOrderItemArgs> items = new();
 
     public OrderBuilder WithId(Guid id)
     {
         this.id = id;
         return this;
     }
-
-    public OrderBuilder WithItem(OrderItem item)
+    
+    public OrderBuilder WithItem(Action<OrderItemBuilder> builderConfig)
     {
-        this.items.Add(item);
-        return this;
-    }
-
-    public OrderBuilder WithItems(params OrderItem[] items)
-    {
-        this.items.AddRange(items);
+        var builder =  new OrderItemBuilder();
+        builderConfig(builder);
+        items.Add(builder.Build());
         return this;
     }
 
     public Order Build()
     {
-        var order = new Order(id, items.ToArray());
-        return order;
+        var args = new CreateOrderArgs()
+        {
+            Id = id,
+            Items = items,
+        };
+        return OrderFactory.Create(args);
     }
-
 }

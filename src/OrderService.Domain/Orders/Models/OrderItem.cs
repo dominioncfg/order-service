@@ -11,6 +11,12 @@ public class OrderItem
 
     public OrderItem(string sku, decimal quantity)
     {
+        if (string.IsNullOrEmpty(sku))
+            throw new InvalidSkuDomainException("Order with invalid sku");
+           
+        if(quantity<=0)
+            throw new InvalidQuantityDomainException($"{quantity} in order {sku} is invalid.");
+
         Sku = sku;
         Quantity = quantity;
     }

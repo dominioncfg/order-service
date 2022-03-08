@@ -19,5 +19,5 @@ public class OrderItemBuilder
         return this;
     }
 
-    public OrderItem Build() => new(sku, quantity);
+    public CreateOrderItemArgs Build() => new() { Sku = sku, Quantity = quantity };
 }

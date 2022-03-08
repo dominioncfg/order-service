@@ -50,17 +50,19 @@ public partial class OrdersQueries : IOrdersQueries
             sku,
             quantity
         FROM core.order_items;";
-        (IEnumerable<GetAllOrdersOrderQueryDto> AllOrders, IEnumerable<GetAllOrdersOrderItemQueryDto> AllOrderItems) response = await _dbQuery.QueryMultipleAsync<GetAllOrdersOrderQueryDto, GetAllOrdersOrderItemQueryDto>(getByIdSql, null, cancellationToken);
 
-        if (!response.Item1.Any())
+        (IEnumerable<GetAllOrdersOrderQueryDto> AllOrders,
+         IEnumerable<GetAllOrdersOrderItemQueryDto> AllOrderItems) = await _dbQuery
+            .QueryMultipleAsync<GetAllOrdersOrderQueryDto, GetAllOrdersOrderItemQueryDto>(getByIdSql, null, cancellationToken);
+
+        if (!AllOrders.Any())
             return new GetAllOrdersResponse() { Orders = new List<GetAllOrdersOrderResponse>() };
 
         var ordersToBeReturned = new List<GetAllOrdersOrderResponse>();
 
-        foreach (var orderDto in response.AllOrders)
+        foreach (var orderDto in AllOrders)
         {
-            var orderItems = response
-                    .AllOrderItems
+            var orderItems = AllOrderItems
                     .Where(x => x.OrderId == orderDto.Id)
                     .ToArray();
 

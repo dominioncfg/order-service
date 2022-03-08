@@ -13,20 +13,42 @@ public class Order : AggregateRoot
 
     protected Order() { }
 
-    public Order(Guid id, OrderItem[] orderItems) : base(id)
+    public Order(Guid id, IEnumerable<CreateOrderItemArgs> orderItemsArgs) : base(id)
     {
-        foreach (var item in orderItems)
-            AddOrderItem(item);
+        if (id == default)
+            throw new InvalidOrderIdException("Order Id has a default value");
 
-        AddDomainEvent(new OrderCreatedDomainEvent()
-        {
-            OrderId = id,
-            Items = Items.Select(x => new OrderItemDto(x.Sku, x.Quantity)).ToArray()
-        });
+        if (orderItemsArgs is null || !orderItemsArgs.Any())
+            throw new OrderWithNoItemsException($"Order '{id}' has no items");
+
+        var orderItems = GetGroupedOrderItemsBySku(orderItemsArgs);
+
+        foreach (var orderItem in orderItems)
+            AddOrderItem(orderItem);
+
+        AddDomainEvent(OrderCreatedDomainEvent.FromOrder(this));
     }
 
-    private void AddOrderItem(OrderItem order)
+    private void AddOrderItem(OrderItem order) => items.Add(order);
+
+    private static List<OrderItem> GetGroupedOrderItemsBySku(IEnumerable<CreateOrderItemArgs> orderItems)
     {
-        items.Add(order);
+        var itemsGrouped = orderItems.GroupBy(x => x.Sku);
+        var resultItems = new List<OrderItem>();
+        foreach (var orderItemGroup in itemsGrouped)
+        {
+            var sku = orderItemGroup.Key;
+            var total = 0m;
+            foreach (var item in orderItemGroup)
+            {
+                if (item.Quantity < 0)
+                    throw new InvalidQuantityDomainException($"{item.Quantity} in order '{sku}' is invalid.");
+
+                total += item.Quantity;
+            }
+            var orderItem = new OrderItem(sku, total);
+            resultItems.Add(orderItem);
+        }
+        return resultItems;
     }
 }

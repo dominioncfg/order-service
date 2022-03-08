@@ -7,7 +7,7 @@ namespace OrderService.Api.FunctionalTests.Features.Orders;
 public class CreateOrderRequestBuilder
 {
     private Guid id;
-    private readonly Dictionary<string, decimal> items = new();
+    private readonly List<CreateOrderItemApiRequest> items = new();
 
     public CreateOrderRequestBuilder WithId(Guid id)
     {
@@ -15,9 +15,11 @@ public class CreateOrderRequestBuilder
         return this;
     }
 
-    public CreateOrderRequestBuilder WithItem(string productSku, int quantity)
+    public CreateOrderRequestBuilder WithItem(Action<CreateOrderItemApiRequestBuilder> builderConfig)
     {
-        items.Add(productSku, quantity);
+        CreateOrderItemApiRequestBuilder builder = new CreateOrderItemApiRequestBuilder();
+        builderConfig(builder);
+        items.Add(builder.Build());
         return this;
     }
 

@@ -2,7 +2,7 @@
 using OrderService.Application.Common.Exceptions;
 using OrderService.Domain.Orders;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,11 +21,20 @@ public record CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand>
     {
         await CheckOrderDontExist(request.Id, cancellationToken);
 
-        var orderItems = new List<OrderItem>();
-        foreach (var item in request.Items)
-            orderItems.Add(new OrderItem(item.Sku, item.Quantity));
+        var orderItems = request.Items
+            .Select(x => new CreateOrderItemArgs 
+            { 
+                Sku = x.Sku, 
+                Quantity = x.Quantity,
+            })
+            .ToArray();
 
-        var order = new Order(request.Id, orderItems.ToArray());
+        var createArgs = new CreateOrderArgs()
+        {
+            Id = request.Id,
+            Items = orderItems,
+        };
+        var order = OrderFactory.Create(createArgs);
 
 
         await _ordersRepository.AddAsync(order, cancellationToken);

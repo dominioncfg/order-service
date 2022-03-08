@@ -10,7 +10,6 @@ dotnet ef migrations add InitialIdenityMigration --project src\OrderService.Infr
 
 ToDo:
 
-	- Add Query By id  and get all with Dapper
 	- Improve Domain layer and Domain UnitTest
 	- Add Consumer
 	- Add Readme

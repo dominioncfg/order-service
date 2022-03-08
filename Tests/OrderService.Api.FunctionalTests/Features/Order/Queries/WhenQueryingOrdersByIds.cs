@@ -27,7 +27,7 @@ public class WhenQueryingOrdersByIds
         var unexistingOrderId = Guid.NewGuid();
         var existingOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
                 .Build()
@@ -45,7 +45,7 @@ public class WhenQueryingOrdersByIds
     {
         var existingOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
                 .Build()
@@ -67,12 +67,12 @@ public class WhenQueryingOrdersByIds
     {
         var existingOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
                 .Build()
             )
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-04")
                 .WithQuantity(3)
                 .Build()
@@ -93,7 +93,7 @@ public class WhenQueryingOrdersByIds
     {
         var orderToBeReturned = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
                 .Build()
@@ -101,7 +101,7 @@ public class WhenQueryingOrdersByIds
             .Build();
         var orderToBeIgnored = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
                 .WithQuantity(2)
             .Build()
@@ -110,8 +110,6 @@ public class WhenQueryingOrdersByIds
 
         await Given.AssumeOrderInRepository(orderToBeReturned);
         await Given.AssumeOrderInRepository(orderToBeIgnored);
-
-
 
         var requestUrl = GetOrderUrl(orderToBeReturned.Id);
         var response = await Given.Server.CreateClient().GetAsync<GetOrderByIdQueryApiResponse>(requestUrl);
@@ -133,8 +131,6 @@ public class WhenQueryingOrdersByIds
             item.Quantity.Should().Be(corresponding!.Quantity);
         }
     }
-
-    
 
     private static string GetOrderUrl(Guid id) => $"api/orders/{id}";
 }

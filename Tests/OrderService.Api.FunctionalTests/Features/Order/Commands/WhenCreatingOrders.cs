@@ -27,7 +27,9 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(default)
-            .WithItem("product-sku-01", 2)
+            .WithItem(item=>item
+                .WithSku("product-sku-01")
+                .WithQuantity(2))
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
@@ -46,11 +48,29 @@ public class WhenCreatingOrders
 
     [Fact]
     [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Negative_Value()
+    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Negative_Quantity()
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", -2)
+            .WithItem(item=> item
+                .WithSku("product-sku-01")
+                .WithQuantity(-2)
+            )
+            .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Zero_Quantity()
+    {
+        var request = new CreateOrderRequestBuilder()
+            .WithId(Guid.NewGuid())
+            .WithItem(item=>item
+                .WithSku("product-sku-01")
+                .WithQuantity(0)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
@@ -62,7 +82,10 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("", 2)
+            .WithItem(item=>item
+                .WithSku(string.Empty)
+                .WithQuantity(2)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
@@ -74,7 +97,10 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", 2)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(2)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectCreatedAsync(PostCreateUrl(), request);
@@ -90,8 +116,14 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", 2)
-            .WithItem("product-sku-02", 3)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(2)
+            )
+            .WithItem(item => item
+                .WithSku("product-sku-02")
+                .WithQuantity(3)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectCreatedAsync(PostCreateUrl(), request);
@@ -107,15 +139,20 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", 2)
-            .WithItem("product-sku-02", 3)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(2)
+            )
+            .WithItem(item => item
+                .WithSku("product-sku-02")
+                .WithQuantity(3)
+            )
             .Build();
         var existingOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem(new OrderItemBuilder()
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+            .WithItem(item => item
+                .WithSku("product-sku-02")
+                .WithQuantity(4)
             )
             .Build();
         await Given.AssumeOrderInRepository(existingOrder);
@@ -136,15 +173,20 @@ public class WhenCreatingOrders
         var existingId = Guid.NewGuid();
         var request = new CreateOrderRequestBuilder()
             .WithId(existingId)
-            .WithItem("product-sku-01", 2)
-            .WithItem("product-sku-02", 3)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(2)
+            )
+            .WithItem(item => item
+                .WithSku("product-sku-02")
+                .WithQuantity(3)
+            )
             .Build();
         var existingOrder = new OrderBuilder()
             .WithId(existingId)
-            .WithItem(new OrderItemBuilder()
+            .WithItem(item => item
                 .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+                .WithQuantity(4)
             )
             .Build();
         await Given.AssumeOrderInRepository(existingOrder);
@@ -158,7 +200,10 @@ public class WhenCreatingOrders
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", 2)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(3)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectCreatedAsync(PostCreateUrl(), request);
@@ -174,11 +219,78 @@ public class WhenCreatingOrders
 
     [Fact]
     [ResetApplicationState]
+    public async Task OrderItems_With_Same_Sku_Are_Combined()
+    {
+        var differentSku = "product-sku-02";
+        var differentSkuQuantity = 2;
+        var skuToBeCombined = "product-sku-01";
+        var skuToBeCombinedSkuQuantity1 = 3;
+        var skuToBeCombinedSkuQuantity2 = 4;
+        var request = new CreateOrderRequestBuilder()
+            .WithId(Guid.NewGuid())
+            .WithItem(item => item
+                .WithSku(differentSku)
+                .WithQuantity(differentSkuQuantity)
+            )
+            .WithItem(item => item
+                .WithSku(skuToBeCombined)
+                .WithQuantity(skuToBeCombinedSkuQuantity1)
+            )
+            .WithItem(item => item
+                .WithSku(skuToBeCombined)
+                .WithQuantity(skuToBeCombinedSkuQuantity2)
+            )
+            .Build();
+
+        await Given.Server.CreateClient().PostAndExpectCreatedAsync(PostCreateUrl(), request);
+
+        var ordersInDb = await Given.GetAllOrdersInRepository();
+        ordersInDb.Should().NotBeNull().And.HaveCount(1);
+        var orderInDb = ordersInDb.First();
+
+        orderInDb.Id.Should().Be(request.Id);
+        orderInDb.Items.Should().HaveCount(2);
+
+        var differentSkuOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku == differentSku);
+        differentSkuOrderItem.Should().NotBeNull();
+        differentSkuOrderItem!.Quantity.Should().Be(differentSkuQuantity);
+
+        var combinedOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku == skuToBeCombined);
+        combinedOrderItem.Should().NotBeNull();
+        combinedOrderItem!.Quantity.Should().Be(skuToBeCombinedSkuQuantity1 + skuToBeCombinedSkuQuantity2);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task Returns_Bad_Request_When_Any_OrderItem_Has_Zero_Quantity_Even_If_Could_Be_Combined()
+    {
+        var skuToBeCombined = "product-sku-01";
+        
+        var request = new CreateOrderRequestBuilder()
+            .WithId(Guid.NewGuid())
+            .WithItem(item => item
+                .WithSku(skuToBeCombined)
+                .WithQuantity(2)
+            )
+            .WithItem(item => item
+                .WithSku(skuToBeCombined)
+                .WithQuantity(0)
+            )
+            .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
     public async Task Dont_Send_Event_When_Request_Is_Invalid()
     {
         var request = new CreateOrderRequestBuilder()
             .WithId(Guid.NewGuid())
-            .WithItem("product-sku-01", -1)
+            .WithItem(item => item
+                .WithSku("product-sku-01")
+                .WithQuantity(-1)
+            )
             .Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
@@ -191,7 +303,7 @@ public class WhenCreatingOrders
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
-        actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count);
+        actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count());
         foreach (var item in actual.Items)
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
@@ -204,7 +316,7 @@ public class WhenCreatingOrders
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
-        actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count);
+        actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count());
         foreach (var item in actual.Items)
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
