@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Domain.Seedwork;
 
 public interface IAggregateRepository<T, Tid> where T : AggregateRoot<Tid>
 {

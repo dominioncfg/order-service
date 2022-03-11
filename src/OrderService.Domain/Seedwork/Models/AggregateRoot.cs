@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Domain.Seedwork;
 
 public abstract class AggregateRoot<TId> : Entity<TId>
 {

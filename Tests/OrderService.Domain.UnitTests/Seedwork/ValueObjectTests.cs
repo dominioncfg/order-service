@@ -1,11 +1,4 @@
-﻿using FluentAssertions;
-using OrderService.Domain.Seedwork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-
-namespace OrderService.Domain.UnitTests.Seedwork;
+﻿namespace OrderService.Domain.UnitTests.Seedwork;
 
 public class ValueObjectTests
 {
@@ -13,7 +6,7 @@ public class ValueObjectTests
 
     #region Equals
     [Fact]
-    public void Equals_When_Both_Nulls_Returns_True()
+    public void EqualsWhenBothNullsReturnsTrue()
     {
         bool result = AreEqual(null, null);
 
@@ -21,7 +14,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Same_Reference_Returns_True()
+    public void EqualsWhenSameReferenceReturnsTrue()
     {
         bool result = AreEqual(APrettyValueObject, APrettyValueObject);
 
@@ -29,7 +22,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Have_Same_Members_Returns_True()
+    public void EqualsWhenHaveSameMembersReturnsTrue()
     {
         var obj1 = new ValueObjectA(1, "2", Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), new ComplexObject(2, "3"));
         var obj2 = new ValueObjectA(1, "2", Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), new ComplexObject(2, "3"));
@@ -40,7 +33,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Non_Equality_Components_Are_Different_Returns_True()
+    public void EqualsWhenNonEqualityComponentsAreDifferentReturnsTrue()
     {
         var obj1 = new ValueObjectA(1, "2", Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), new ComplexObject(2, "3"), notAnEqualityComponent: "xpto");
         var obj2 = new ValueObjectA(1, "2", Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), new ComplexObject(2, "3"), notAnEqualityComponent: "xpto2");
@@ -51,7 +44,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_All_Components_Are_Equals_Returns_True()
+    public void EqualsWhenAllComponentsAreEqualsReturnsTrue()
     {
         var obj1 = new ValueObjectB(1, "2", 1, 2, 3);
         var obj2 = new ValueObjectB(1, "2", 1, 2, 3);
@@ -64,7 +57,7 @@ public class ValueObjectTests
 
     #region Non Equals
     [Fact]
-    public void Equals_When_First_Member_IsNotEqual_Returns_False()
+    public void EqualsWhenFirstMemberIsNotEqualReturnsFalse()
     {
         var obj1 = new ValueObjectA(a: 1, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(2, "3"));
         var obj2 = new ValueObjectA(a: 2, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(2, "3"));
@@ -75,7 +68,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Any_Other_Member_IsNotEqual_Returns_False()
+    public void EqualsWhenAnyOtherMemberIsNotEqualReturnsFalse()
     {
         var obj1 = new ValueObjectA(a: 1, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(2, "3"));
         var obj2 = new ValueObjectA(a: 1, b: null, c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(2, "3"));
@@ -86,7 +79,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Inner_Member_IsNotEqual_Returns_False()
+    public void EqualsWhenInnerMemberIsNotEqualReturnsFalse()
     {
         var obj1 = new ValueObjectA(a: 1, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(a: 2, b: "3"));
         var obj2 = new ValueObjectA(a: 1, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(a: 3, b: "3"));
@@ -97,7 +90,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Equals_When_Different_Types_Returns_False()
+    public void EqualsWhenDifferentTypesReturnsFalse()
     {
         var obj1 = new ValueObjectA(a: 1, b: "2", c: Guid.Parse("97ea43f0-6fef-4fb7-8c67-9114a7ff6ec0"), d: new ComplexObject(a: 2, b: "3"));
         var obj2 = new ValueObjectB(a: 1, b: "2");
@@ -109,7 +102,7 @@ public class ValueObjectTests
 
 
     [Fact]
-    public void Equals_When_Inner_List_Has_Different_Length_Returns_False()
+    public void EqualsWhenInnerListHasDifferentLengthReturnsFalse()
     {
         var obj1 = new ValueObjectB(1, "2", 1, 2, 3);
         var obj2 = new ValueObjectB(1, "2", 1, 2, 3, 4);

@@ -25,7 +25,8 @@ public record CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand>
             .Select(x => new CreateOrderItemArgs 
             { 
                 Sku = x.Sku, 
-                Quantity = x.Quantity,
+                UnitPrice = -1,
+                Quantity = (int)x.Quantity,
             })
             .ToArray();
 

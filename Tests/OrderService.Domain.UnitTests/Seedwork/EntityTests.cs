@@ -1,14 +1,10 @@
-﻿using FluentAssertions;
-using OrderService.Domain.Seedwork;
-using Xunit;
-
-namespace OrderService.Domain.UnitTests.Seedwork;
+﻿namespace OrderService.Domain.UnitTests.Seedwork;
 #nullable disable
 public class EntityTests
 {
     #region Equals
     [Fact]
-    public void Equals_When_Id_Is_Equal_But_Different_Type_Returns_False()
+    public void EqualsWhenIdIsEqualButDifferentTypeReturnsFalse()
     {
         var obj1 = new Entity1(1);
         var obj2 = new Entity2(1);
@@ -19,7 +15,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Equals_When_Both_Nulls_Returns_True()
+    public void EqualsWhenBothNullsReturnsTrue()
     {
         Entity<int> obj1 = null;
         Entity<int> obj2 = null;
@@ -28,7 +24,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Equals_When_Same_Reference_Returns_True()
+    public void EqualsWhenSameReferenceReturnsTrue()
     {
         var TestEntity = new Entity1(1);
 
@@ -38,7 +34,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Equals_When_Same_Id_True()
+    public void EqualsWhenSameIdTrue()
     {
         var obj1 = new Entity1(1);
         var obj2 = new Entity1(1);
@@ -50,7 +46,7 @@ public class EntityTests
 
 
     [Fact]
-    public void Equals_When_Same_Id_But_Is_0_False()
+    public void EqualsWhenSameIdButIs0False()
     {
         var obj1 = new Entity1(0);
         var obj2 = new Entity1(0);
@@ -61,7 +57,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Equals_When_Same_Id_Are_Diferent_False()
+    public void EqualsWhenSameIdAreDiferentFalse()
     {
         var obj1 = new Entity1(0);
         var obj2 = new Entity1(1);
@@ -72,7 +68,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Equals_When_One_Null_Values_String_False()
+    public void EqualsWhenOneNullValuesStringFalse()
     {
         var obj1 = new Entity3("");
         var obj2 = new Entity3(null);

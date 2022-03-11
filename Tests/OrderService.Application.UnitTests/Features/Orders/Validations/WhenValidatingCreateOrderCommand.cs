@@ -1,11 +1,5 @@
-﻿using FluentValidation.TestHelper;
-using OrderService.Application.Features.Orders;
-using System;
-using Xunit;
-
-//This is a good place to do Fluent validation test to avoid doing many Integration test 
+﻿//This is a good place to do Fluent validation test to avoid doing many Integration test 
 namespace OrderService.Application.UnitTests.Features.Orders;
-
 
 public class WhenValidatingCreateOrderCommand
 {

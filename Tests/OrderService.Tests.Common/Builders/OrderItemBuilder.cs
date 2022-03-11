@@ -5,7 +5,8 @@ namespace OrderService.Tests.Common.Builders;
 public class OrderItemBuilder
 {
     private string sku = string.Empty;
-    private decimal quantity;
+    private decimal unitPrice;
+    private int quantity;
 
     public OrderItemBuilder WithSku(string sku)
     {
@@ -13,11 +14,17 @@ public class OrderItemBuilder
         return this;
     }
 
-    public OrderItemBuilder WithQuantity(decimal quantity)
+    public OrderItemBuilder WithQuantity(int quantity)
     {
         this.quantity = quantity;
         return this;
     }
 
-    public CreateOrderItemArgs Build() => new() { Sku = sku, Quantity = quantity };
+    public OrderItemBuilder WithUnitPrice(decimal unitPrice)
+    {
+        this.unitPrice = unitPrice;
+        return this;
+    }
+
+    public CreateOrderItemArgs Build() => new() { Sku = sku, UnitPrice = unitPrice, Quantity = quantity };
 }

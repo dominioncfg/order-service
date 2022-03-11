@@ -1,27 +1,28 @@
-﻿using OrderService.Domain.Seedwork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OrderService.Domain.Orders;
+﻿namespace OrderService.Domain.Orders;
 
 public record OrderCreatedDomainEvent : IDomainEvent
 {
     public Guid OrderId { get; init; }
-    public IEnumerable<OrderItemDto> Items { get; init; } 
+    public Guid BuyerId { get; init; }
+    public OrderCreationDate CreationDateTime { get; init; }
+    public OrderAddress Address { get; init; }
+    public IEnumerable<OrderCreatedOrderItemDomainEventDto> Items { get; init; }
 
-    private OrderCreatedDomainEvent(Guid orderId, OrderItemDto[] items) 
-    { 
+    private OrderCreatedDomainEvent(Guid orderId, Guid buyerId, OrderCreationDate creationDateTime, OrderAddress address, OrderCreatedOrderItemDomainEventDto[] items)
+    {
         OrderId = orderId;
+        BuyerId = buyerId;
+        Address = address;
+        CreationDateTime = creationDateTime;
         Items = items;
     }
     public static OrderCreatedDomainEvent FromOrder(Order order)
     {
         var items = order.Items
-            .Select(x => new OrderItemDto(x.Sku, x.Quantity))
+            .Select(x => new OrderCreatedOrderItemDomainEventDto(x.Id, x.Sku.Value, x.UnitPrice.Value, x.Quantity.Value))
             .ToArray();
-        return new OrderCreatedDomainEvent(order.Id,items);
+        return new OrderCreatedDomainEvent(order.Id, order.BuyerId, order.CreationDateTime,order.Address, items);
     }
 }
 
-public record OrderItemDto(string Sku, decimal Quantity);
+public record OrderCreatedOrderItemDomainEventDto(Guid Id, string Sku, decimal UnitPrice, int Quantity);

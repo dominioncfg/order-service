@@ -1,7 +1,4 @@
-﻿using OrderService.Domain.Seedwork;
-using System;
-
-namespace OrderService.Domain.Orders;
+﻿namespace OrderService.Domain.Orders;
 
 [Serializable]
 public class InvalidQuantityDomainException : DomainException

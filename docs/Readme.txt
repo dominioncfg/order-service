@@ -11,7 +11,9 @@ dotnet ef migrations add InitialIdenityMigration --project src\OrderService.Infr
 ToDo:
 
 	- Improve Domain layer and Domain UnitTest
-	- Add Consumer
-	- Add Readme
-	- Add Continous Integration
 	- Add Delete & Update?
+	- Add Consumer
+	- Add Continous Integration
+	- Add Readme
+	
+	

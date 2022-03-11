@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace OrderService.Domain.Orders;
+﻿namespace OrderService.Domain.Orders;
 
 public record GetAllOrdersResponse
 {

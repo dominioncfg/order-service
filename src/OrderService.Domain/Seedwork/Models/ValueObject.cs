@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Domain.Seedwork;
 
 public abstract class ValueObject
 {

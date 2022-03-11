@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Domain.Seedwork;
 
 [Serializable]
 public class DomainException : Exception

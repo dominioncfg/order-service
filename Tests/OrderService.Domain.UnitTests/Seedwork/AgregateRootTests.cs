@@ -1,16 +1,11 @@
-﻿using FluentAssertions;
-using OrderService.Domain.Seedwork;
-using System.Linq;
-using Xunit;
-
-namespace OrderService.Domain.UnitTests.Seedwork;
+﻿namespace OrderService.Domain.UnitTests.Seedwork;
 #nullable disable
 public class AgregateRootTests
 {
 
     #region Equals
     [Fact]
-    public void Equals_When_Id_Is_Equal_But_Different_Type_Returns_False()
+    public void EqualsWhenIdIsEqualButDifferentTypeReturnsFalse()
     {
         var obj1 = new AggregateRoot1(1);
         var obj2 = new AggregateRoot2(1);
@@ -21,7 +16,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Equals_When_Both_Nulls_Returns_True()
+    public void EqualsWhenBothNullsReturnsTrue()
     {
         Entity<int> obj1 = null;
         Entity<int> obj2 = null;
@@ -30,7 +25,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Equals_When_Same_Reference_Returns_True()
+    public void EqualsWhenSameReferenceReturnsTrue()
     {
         var TestEntity = new AggregateRoot1(1);
 
@@ -40,7 +35,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Equals_When_Same_Id_True()
+    public void EqualsWhenSameIdTrue()
     {
         var obj1 = new AggregateRoot1(1);
         var obj2 = new AggregateRoot1(1);
@@ -52,7 +47,7 @@ public class AgregateRootTests
 
 
     [Fact]
-    public void Equals_When_Same_Id_But_Is_0_False()
+    public void EqualsWhenSameIdButIs0False()
     {
         var obj1 = new AggregateRoot1(0);
         var obj2 = new AggregateRoot1(0);
@@ -63,7 +58,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Equals_When_Same_Id_Are_Diferent_False()
+    public void EqualsWhenSameIdAreDiferentFalse()
     {
         var obj1 = new AggregateRoot1(0);
         var obj2 = new AggregateRoot1(1);
@@ -74,7 +69,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Equals_When_One_Null_Values_String_False()
+    public void EqualsWhenOneNullValuesStringFalse()
     {
         var obj1 = new AggregateRoot3("");
         var obj2 = new AggregateRoot3(null);
@@ -87,7 +82,7 @@ public class AgregateRootTests
 
     #region Domain Events
     [Fact]
-    public void Can_Raise_Domain_Events()
+    public void CanRaiseDomainEvents()
     {
         var obj1 = new AggregateRoot1(1);
         var @event = new TestDomainEvent() { TestProperty = 1 };
@@ -99,7 +94,7 @@ public class AgregateRootTests
     }
 
     [Fact]
-    public void Can_Clear_Domain_Events()
+    public void CanClearDomainEvents()
     {
         var obj1 = new AggregateRoot1(1);
         var @event = new TestDomainEvent() { TestProperty = 1 };
