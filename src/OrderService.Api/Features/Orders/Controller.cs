@@ -1,6 +1,4 @@
-﻿using OrderService.Application.Features.Orders;
-
-namespace OrderService.Api.Features.Orders;
+﻿namespace OrderService.Api.Features.Orders;
 
 [Route("api/orders")]
 public class OrdersController : ApiControllerBase

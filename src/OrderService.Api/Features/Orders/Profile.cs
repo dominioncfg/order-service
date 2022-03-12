@@ -1,6 +1,4 @@
-﻿using OrderService.Application.Features.Orders;
-
-namespace OrderService.Api.Features.Orders;
+﻿namespace OrderService.Api.Features.Orders;
 
 public class OrdersControllerProfile : Profile
 {
@@ -23,6 +21,8 @@ public class OrdersControllerProfile : Profile
     private void MapGetById()
     {
         CreateMap<GetOrderByIdQueryResponse, GetOrderByIdQueryApiResponse>();
+        CreateMap<GetOrderByIdOrderStatusQueryResponse, GetOrderByIdOrderStatusQueryApiResponse>();
+        CreateMap<GetOrderByIdOrderAddressQueryResponse, GetOrderByIdOrderAddressQueryApiResponse>();
         CreateMap<GetOrderByIdOrderItemQueryResponse, GetOrderByIdOrderItemQueryApiResponse>();
     }
 

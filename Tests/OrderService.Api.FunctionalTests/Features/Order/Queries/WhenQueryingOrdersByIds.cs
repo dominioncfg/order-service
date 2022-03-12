@@ -163,11 +163,24 @@ public class WhenQueryingOrdersByIds
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
+        actual.BuyerId.Should().Be(expected.BuyerId);
+        actual.CreationDateTimeUtc.Should().Be(expected.CreationDateTime.UtcValue);
+        actual.Status.Should().NotBeNull();
+        actual.Status.Id.Should().Be(expected.Status.Id);
+        actual.Status.Name.Should().Be(expected.Status.Name);
+        actual.Address.Should().NotBeNull();
+        actual.Address.Country.Should().Be(expected.Address.Country);
+        actual.Address.City.Should().Be(expected.Address.City);
+        actual.Address.Street.Should().Be(expected.Address.Street);
+        actual.Address.Number.Should().Be(expected.Address.Number);
+
+
         actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count);
         foreach (var item in actual.Items)
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
             corresponding.Should().NotBeNull();
+            item.UnitPrice.Should().Be(corresponding!.UnitPrice);
             item.Quantity.Should().Be(corresponding!.Quantity);
         }
     }

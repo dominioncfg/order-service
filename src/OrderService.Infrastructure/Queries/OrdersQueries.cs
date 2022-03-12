@@ -18,30 +18,91 @@ public partial class OrdersQueries : IOrdersQueries
 
     public async Task<GetOrderByIdResponse?> GetOrderIdOrDefaultAsync(Guid orderId, CancellationToken cancellationToken)
     {
-        const string getByIdSql = @$"
-        SELECT 
-            id
-        FROM  core.orders 
-        WHERE id = @OrderId;
-        SELECT 
-            sku,
-            quantity
-        FROM core.order_items
-        WHERE order_id = @OrderId;";
+        string getByIdSql = GetOrderByIdSqlQuery();
         var queryParams = new { OrderId = orderId };
-        var response = await _dbQuery.QueryMultipleAsync<GetOrderByIdResponse, GetOrderByIdOrderItemResponse>(getByIdSql, queryParams, cancellationToken);
 
-        if (!response.Item1.Any())
+        (var orders, var orderItems) = await _dbQuery
+            .QueryMultipleAsync<GetOrdersByIdOrderQueryDto, GetOrdersByIdOrderItemQueryDto>
+                (getByIdSql, queryParams, cancellationToken);
+
+        if (!orders.Any())
             return null;
 
-        return response.Item1.First() with
-        {
-            Items = response.Item2,
-        };
+        var orderDto = orders.Single();
+        return MapGetByIdInfraQueryResponse(orderDto,orderItems);
     }
+
     public async Task<GetAllOrdersResponse> GetAllOrdersAsync(CancellationToken cancellationToken)
     {
-        var getByIdSql = @$"
+        string getAllOrdersSql = GetAllOrdersSqlQuery();
+
+        (var allOrders, var allOrderItems) = await _dbQuery
+            .QueryMultipleAsync<GetAllOrdersOrderQueryDto, GetAllOrdersOrderItemQueryDto>
+                (getAllOrdersSql, null, cancellationToken);
+
+        if (!allOrders.Any())
+            return new GetAllOrdersResponse() { Orders = new List<GetAllOrdersOrderResponse>() };
+       
+        return new GetAllOrdersResponse()
+        {
+            Orders = MapGetAllOrderResponse(allOrders, allOrderItems),
+        };
+    }    
+
+    private static string GetOrderByIdSqlQuery()
+    {
+        return @$"
+        SELECT 
+            id as {nameof(GetOrdersByIdOrderQueryDto.Id).ToSqlField()},
+            buyer_id as {nameof(GetOrdersByIdOrderQueryDto.BuyerId).ToSqlField()},
+            creation_date_time as {nameof(GetOrdersByIdOrderQueryDto.CreationDateTime).ToSqlField()},
+            status_id as {nameof(GetOrdersByIdOrderQueryDto.StatusId).ToSqlField()},
+            status_name as {nameof(GetOrdersByIdOrderQueryDto.StatusName).ToSqlField()},
+            address_country as {nameof(GetOrdersByIdOrderQueryDto.Country).ToSqlField()},
+            address_city as {nameof(GetOrdersByIdOrderQueryDto.City).ToSqlField()},
+            address_street as {nameof(GetOrdersByIdOrderQueryDto.Street).ToSqlField()},
+            address_number as {nameof(GetOrdersByIdOrderQueryDto.Number).ToSqlField()}
+        FROM  core.orders
+        WHERE id = @OrderId;
+        SELECT 
+            order_id as {nameof(GetOrdersByIdOrderItemQueryDto.OrderId).ToSqlField()},
+            sku as {nameof(GetOrdersByIdOrderItemQueryDto.Sku).ToSqlField()},
+            unit_price as {nameof(GetOrdersByIdOrderItemQueryDto.UnitPrice).ToSqlField()},
+            quantity as {nameof(GetOrdersByIdOrderItemQueryDto.Quantity).ToSqlField()}
+        FROM core.order_items
+        WHERE order_id = @OrderId;";
+    }
+
+    private static GetOrderByIdResponse MapGetByIdInfraQueryResponse(GetOrdersByIdOrderQueryDto orderDto, IEnumerable<GetOrdersByIdOrderItemQueryDto> orderItems)
+    {
+        return new GetOrderByIdResponse()
+        {
+            Id = orderDto.Id,
+            BuyerId = orderDto.BuyerId,
+            CreationDateTimeUtc = orderDto.CreationDateTime,
+            Status = new GetOrderByIdOrderStatusResponse()
+            {
+                Id = orderDto.StatusId,
+                Name = orderDto.StatusName,
+            },
+            Address = new GetOrderByIdOrderAddressResponse()
+            {
+                Country = orderDto.Country,
+                City = orderDto.City,
+                Street = orderDto.Street,
+                Number = orderDto.Number,
+            },
+            Items = orderItems.Select(x => new GetOrderByIdOrderItemResponse()
+            {
+                Sku = x.Sku,
+                Quantity = x.Quantity,
+            })
+        };
+    }
+
+    private static string GetAllOrdersSqlQuery()
+    {
+        return @$"
         SELECT 
             id as {nameof(GetAllOrdersOrderQueryDto.Id).ToSqlField()},
             buyer_id as {nameof(GetAllOrdersOrderQueryDto.BuyerId).ToSqlField()},
@@ -52,57 +113,54 @@ public partial class OrdersQueries : IOrdersQueries
             address_city as {nameof(GetAllOrdersOrderQueryDto.City).ToSqlField()},
             address_street as {nameof(GetAllOrdersOrderQueryDto.Street).ToSqlField()},
             address_number as {nameof(GetAllOrdersOrderQueryDto.Number).ToSqlField()}
-        FROM  core.orders; 
+        FROM  core.orders;         
         SELECT 
             order_id as {nameof(GetAllOrdersOrderItemQueryDto.OrderId).ToSqlField()},
             sku as {nameof(GetAllOrdersOrderItemQueryDto.Sku).ToSqlField()},
             unit_price as {nameof(GetAllOrdersOrderItemQueryDto.UnitPrice).ToSqlField()},
             quantity as {nameof(GetAllOrdersOrderItemQueryDto.Quantity).ToSqlField()}
         FROM core.order_items;";
+    }
 
-        (IEnumerable<GetAllOrdersOrderQueryDto> AllOrders,
-         IEnumerable<GetAllOrdersOrderItemQueryDto> AllOrderItems) = await _dbQuery
-            .QueryMultipleAsync<GetAllOrdersOrderQueryDto, GetAllOrdersOrderItemQueryDto>(getByIdSql, null, cancellationToken);
-
-        if (!AllOrders.Any())
-            return new GetAllOrdersResponse() { Orders = new List<GetAllOrdersOrderResponse>() };
-
+    private static List<GetAllOrdersOrderResponse> MapGetAllOrderResponse(IEnumerable<GetAllOrdersOrderQueryDto> allOrders, IEnumerable<GetAllOrdersOrderItemQueryDto> allOrderItems)
+    {
         var ordersToBeReturned = new List<GetAllOrdersOrderResponse>();
-
-        foreach (var orderDto in AllOrders)
+        foreach (var orderDto in allOrders)
         {
-            var orderItems = AllOrderItems
+            var orderItems = allOrderItems
                     .Where(x => x.OrderId == orderDto.Id)
                     .ToArray();
-
-            ordersToBeReturned.Add(new GetAllOrdersOrderResponse()
-            {
-                Id = orderDto.Id,
-                BuyerId = orderDto.BuyerId,
-                CreationDateTimeUtc = orderDto.CreationDateTime,
-                Status = new GetAllOrdersOrderStatusResponse()
-                {
-                    Id = orderDto.StatusId,
-                    Name = orderDto.StatusName,
-                },
-                Address= new GetAllOrdersOrderAddressResponse()
-                {
-                    Country = orderDto.Country,
-                    City = orderDto.City,
-                    Street = orderDto.Street,
-                    Number = orderDto.Number,
-                },
-                Items = orderItems.Select(x => new GetAllOrdersOrderItemResponse()
-                {
-                    Sku = x.Sku,
-                    Quantity = x.Quantity,
-                })
-            });
+            var order = MapSingleGetAllOrdersInfraQueryResponse(orderDto, orderItems);
+            ordersToBeReturned.Add(order);
         }
 
-        return new GetAllOrdersResponse()
+        return ordersToBeReturned;
+    }
+
+    private static GetAllOrdersOrderResponse MapSingleGetAllOrdersInfraQueryResponse(GetAllOrdersOrderQueryDto orderDto, GetAllOrdersOrderItemQueryDto[] orderItems)
+    {
+        return new GetAllOrdersOrderResponse()
         {
-            Orders = ordersToBeReturned.ToArray(),
+            Id = orderDto.Id,
+            BuyerId = orderDto.BuyerId,
+            CreationDateTimeUtc = orderDto.CreationDateTime,
+            Status = new GetAllOrdersOrderStatusResponse()
+            {
+                Id = orderDto.StatusId,
+                Name = orderDto.StatusName,
+            },
+            Address = new GetAllOrdersOrderAddressResponse()
+            {
+                Country = orderDto.Country,
+                City = orderDto.City,
+                Street = orderDto.Street,
+                Number = orderDto.Number,
+            },
+            Items = orderItems.Select(x => new GetAllOrdersOrderItemResponse()
+            {
+                Sku = x.Sku,
+                Quantity = x.Quantity,
+            })
         };
     }
 }
