@@ -1,6 +1,5 @@
-﻿using OrderService.Domain.Seedwork;
+﻿namespace OrderService.Api.FunctionalTests.SeedWork;
 
-namespace OrderService.Api.FunctionalTests.SeedWork;
 internal class MockClockService : IClockService
 {
     private static readonly Lazy<MockClockService> _service;

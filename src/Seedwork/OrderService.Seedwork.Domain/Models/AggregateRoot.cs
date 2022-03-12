@@ -1,4 +1,4 @@
-﻿namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Seedwork.Domain;
 
 public abstract class AggregateRoot<TId> : Entity<TId>
 {

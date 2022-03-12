@@ -1,4 +1,4 @@
-﻿namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Seedwork.Domain;
 
 public static class DateTimeExtensions
 {

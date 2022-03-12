@@ -1,1 +1,1 @@
-﻿global using OrderService.Domain.Seedwork;
+﻿global using OrderService.Seedwork.Domain;

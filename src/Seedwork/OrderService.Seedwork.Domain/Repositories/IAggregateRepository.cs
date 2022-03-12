@@ -1,4 +1,4 @@
-﻿namespace OrderService.Domain.Seedwork;
+﻿namespace OrderService.Seedwork.Domain;
 
 public interface IAggregateRepository<T, Tid> where T : AggregateRoot<Tid>
 {

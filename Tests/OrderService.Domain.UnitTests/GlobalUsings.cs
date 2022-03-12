@@ -1,6 +1,6 @@
-﻿global using Xunit;
-global using FluentAssertions;
+﻿global using FluentAssertions;
 global using FluentAssertions.Extensions;
-global using OrderService.Domain.Seedwork;
 global using OrderService.Domain.Orders;
-global using OrderService.Tests.Common.Builders;
+global using OrderService.Seedwork.Domain;
+global using OrderService.Tests.Common.Orders;
+global using Xunit;

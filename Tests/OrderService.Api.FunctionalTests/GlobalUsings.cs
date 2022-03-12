@@ -1,8 +1,9 @@
-﻿global using OrderService.Api.Features.Orders;
-global using FluentAssertions;
+﻿global using FluentAssertions;
 global using FluentAssertions.Extensions;
+global using OrderService.Api.Features.Orders;
 global using OrderService.Api.FunctionalTests.SeedWork;
 global using OrderService.Api.FunctionalTests.Shared;
 global using OrderService.Domain.Orders;
-global using OrderService.Tests.Common.Builders;
+global using OrderService.Seedwork.Domain;
+global using OrderService.Tests.Common.Orders;
 global using Xunit;

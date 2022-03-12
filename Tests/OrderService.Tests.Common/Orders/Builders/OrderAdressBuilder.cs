@@ -1,6 +1,6 @@
 ﻿using OrderService.Domain.Orders;
 
-namespace OrderService.Tests.Common.Builders;
+namespace OrderService.Tests.Common.Orders;
 
 public class OrderAdressBuilder
 {

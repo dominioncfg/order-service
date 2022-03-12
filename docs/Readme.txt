@@ -11,7 +11,6 @@ dotnet ef migrations add InitialOrderService --project src\OrderService.Infrastr
 
 ToDo:
 
-	- Improve Domain layer and Domain UnitTest
 	- Add Delete & Update?
 	- Add Consumer
 	- Add Continous Integration

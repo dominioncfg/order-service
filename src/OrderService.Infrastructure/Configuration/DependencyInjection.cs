@@ -4,10 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OrderService.Domain.Orders;
-using OrderService.Domain.Seedwork;
 using OrderService.Infrastructure.DbQueries;
 using OrderService.Infrastructure.Queries;
 using OrderService.Infrastructure.Repositories;
+using OrderService.Seedwork.Domain;
 using System.Threading.Tasks;
 
 namespace OrderService.Infrastructure.Configuration;

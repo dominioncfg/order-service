@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace OrderService.Domain.Seedwork;
+namespace OrderService.Seedwork.Domain;
 
 public interface IDomainEvent : INotification { }
