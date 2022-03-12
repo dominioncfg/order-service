@@ -15,6 +15,8 @@ public class OrdersControllerProfile : Profile
     {
         CreateMap<GetAllOrdersQueryResponse, GetAllOrdersQueryApiResponse>();
         CreateMap<GetAllOrdersOrderQueryResponse, GetAllOrdersOrderQueryApiResponse>();
+        CreateMap<GetAllOrdersOrderStatusQueryResponse, GetAllOrdersOrderStatusQueryApiResponse>();
+        CreateMap<GetAllOrdersOrderAddressQueryResponse, GetAllOrdersOrderAddressQueryApiResponse>();
         CreateMap<GetAllOrdersOrderItemQueryResponse, GetAllOrdersOrderItemQueryApiResponse>();
     }
 

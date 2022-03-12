@@ -6,6 +6,8 @@ public class GetAllOrdersQueryProfile : Profile
     {
         CreateMap<GetAllOrdersResponse, GetAllOrdersQueryResponse>();
         CreateMap<GetAllOrdersOrderResponse, GetAllOrdersOrderQueryResponse>();
+        CreateMap<GetAllOrdersOrderStatusResponse, GetAllOrdersOrderStatusQueryResponse>();
+        CreateMap<GetAllOrdersOrderAddressResponse, GetAllOrdersOrderAddressQueryResponse>();
         CreateMap<GetAllOrdersOrderItemResponse, GetAllOrdersOrderItemQueryResponse>();
     }
 }

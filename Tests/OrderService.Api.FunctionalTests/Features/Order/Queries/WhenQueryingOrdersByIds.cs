@@ -3,6 +3,16 @@ namespace OrderService.Api.FunctionalTests.Features.Orders;
 [Collection(nameof(TestServerFixtureCollection))]
 public class WhenQueryingOrdersByIds
 {
+    private readonly Guid Id = Guid.NewGuid();
+    private readonly Guid BuyerId = Guid.NewGuid();
+    private readonly DateTime CreationDateTime = new DateTime(2020, 10, 02).At(03, 00);
+    private const string Sku = "prod01";
+    private const decimal UnitPrice = 10;
+    private const int Quantity = 1;
+    private const string AddressCountry = "Spain";
+    private const string AddressCity = "Madrid";
+    private const string AddressStreet = "Gran Via";
+    private const string AddressNumber = "55";
     private readonly TestServerFixture Given;
 
     public WhenQueryingOrdersByIds(TestServerFixture given)
@@ -16,11 +26,19 @@ public class WhenQueryingOrdersByIds
     {
         var unexistingOrderId = Guid.NewGuid();
         var existingOrder = new OrderBuilder()
-            .WithId(Guid.NewGuid())
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithCreationDateTime(CreationDateTime)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
+            )
             .WithItem(item => item
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+              .WithSku(Sku)
+              .WithUnitPrice(UnitPrice)
+              .WithQuantity(Quantity)
             )
             .Build();
         await Given.AssumeOrderInRepository(existingOrder);
@@ -34,18 +52,26 @@ public class WhenQueryingOrdersByIds
     public async Task ReturnsOrderWithSingleItem()
     {
         var existingOrder = new OrderBuilder()
-            .WithId(Guid.NewGuid())
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithCreationDateTime(CreationDateTime)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
+            )
             .WithItem(item => item
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+              .WithSku(Sku)
+              .WithUnitPrice(UnitPrice)
+              .WithQuantity(Quantity)
             )
             .Build();
         await Given.AssumeOrderInRepository(existingOrder);
 
         var requestUrl = GetOrderUrl(existingOrder.Id);
         var response = await Given.Server.CreateClient().GetAsync<GetOrderByIdQueryApiResponse>(requestUrl);
-        
+
         response.Items.Should().HaveCount(1);
         AssertOrderByIdApiResponse(response, existingOrder);
     }
@@ -56,16 +82,24 @@ public class WhenQueryingOrdersByIds
     public async Task ReturnsOrderWithMultipleItems()
     {
         var existingOrder = new OrderBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithCreationDateTime(CreationDateTime)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
             )
             .WithItem(item => item
-                .WithSku("product-sku-04")
-                .WithQuantity(3)
-                .Build()
+              .WithSku(Sku)
+              .WithUnitPrice(UnitPrice)
+              .WithQuantity(Quantity)
+            )
+            .WithItem(item => item
+              .WithSku("prod02")
+              .WithUnitPrice(UnitPrice + 1)
+              .WithQuantity(Quantity + 2)
             )
             .Build();
         await Given.AssumeOrderInRepository(existingOrder);
@@ -74,7 +108,7 @@ public class WhenQueryingOrdersByIds
         var response = await Given.Server.CreateClient().GetAsync<GetOrderByIdQueryApiResponse>(requestUrl);
 
         response.Items.Should().HaveCount(2);
-        AssertOrderByIdApiResponse(response,existingOrder);
+        AssertOrderByIdApiResponse(response, existingOrder);
     }
 
     [Fact]
@@ -82,22 +116,38 @@ public class WhenQueryingOrdersByIds
     public async Task ReturnsCorrectOrderWhenThereMultipleOrders()
     {
         var orderToBeReturned = new OrderBuilder()
-            .WithId(Guid.NewGuid())
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithCreationDateTime(CreationDateTime)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
+            )
             .WithItem(item => item
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-                .Build()
+              .WithSku(Sku)
+              .WithUnitPrice(UnitPrice)
+              .WithQuantity(Quantity)
             )
             .Build();
+
         var orderToBeIgnored = new OrderBuilder()
             .WithId(Guid.NewGuid())
+            .WithBuyerId(Guid.NewGuid())
+            .WithCreationDateTime(CreationDateTime.AddHours(1))
+            .WithAddress(address => address
+                .WithCountry("UK")
+                .WithCity("London")
+                .WithStreet("Downing Street")
+                .WithNumber("10")
+            )
             .WithItem(item => item
-                .WithSku("product-sku-03")
-                .WithQuantity(2)
-            .Build()
-       )
-       .Build();
-
+              .WithSku("prod02")
+              .WithUnitPrice(UnitPrice + 1)
+              .WithQuantity(Quantity + 1)
+            )
+            .Build();
         await Given.AssumeOrderInRepository(orderToBeReturned);
         await Given.AssumeOrderInRepository(orderToBeIgnored);
 

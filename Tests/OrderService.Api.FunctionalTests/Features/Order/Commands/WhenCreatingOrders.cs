@@ -199,7 +199,7 @@ public class WhenCreatingOrders
 
         var ordersInDb = await Given.GetAllOrdersInRepository();
 
-        var events = Given.GetPublishedEventsOfType<OrderCreatedIntegrationEvent>();
+        var events = Given.GetPublishedEventsOfType<OrderSubmitedIntegrationEvent>();
         ordersInDb.Should().NotBeNull().And.HaveCount(1);
         events.Should().NotBeNull().And.HaveCount(1);
         AssertOrderFromRequest(ordersInDb.First(), request, CreationDateTime);
@@ -302,7 +302,7 @@ public class WhenCreatingOrders
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
 
-        var events = Given.GetPublishedEventsOfType<OrderCreatedIntegrationEvent>();
+        var events = Given.GetPublishedEventsOfType<OrderSubmitedIntegrationEvent>();
         events.Should().NotBeNull().And.BeEmpty();
     }
 
@@ -429,6 +429,7 @@ public class WhenCreatingOrders
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
         actual.BuyerId.Should().Be(expected.BuyerId);
+        actual.Status.Should().Be(OrderStatus.Submitted);
         actual.CreationDateTime.UtcValue.Should().Be(ocurredAt);
 
         actual.Address.Should().NotBeNull();
@@ -447,12 +448,12 @@ public class WhenCreatingOrders
         }
     }
 
-    private static void AssertEventFromRequest(OrderCreatedIntegrationEvent actual, CreateOrderApiRequest expected)
+    private static void AssertEventFromRequest(OrderSubmitedIntegrationEvent actual, CreateOrderApiRequest expected)
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
         actual.BuyerId.Should().Be(expected.BuyerId);
-
+        
         actual.Address.Should().NotBeNull();
         actual.Address.Country.Should().Be(expected.Address.Country);
         actual.Address.City.Should().Be(expected.Address.City);
