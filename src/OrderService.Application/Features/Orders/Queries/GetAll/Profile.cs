@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using OrderService.Domain.Orders;
-
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public class GetAllOrdersQueryProfile : Profile
 {

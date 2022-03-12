@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.Common.Behaviours;
 using OrderService.Application.Common.Configuration;
 

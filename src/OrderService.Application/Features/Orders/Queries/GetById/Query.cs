@@ -1,7 +1,4 @@
-﻿using MediatR;
-using System;
-
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public record GetOrderByIdQuery : IRequest<GetOrderByIdQueryResponse>
 {

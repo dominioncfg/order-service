@@ -1,16 +1,17 @@
 ﻿namespace OrderService.Domain.Orders;
 
-public class OrderCreationDate: ValueObject
+public class OrderCreationDate : ValueObject
 {
-    public DateTime Value { get; }
+    public DateTime UtcValue { get; }
 
-    private OrderCreationDate() { }
-    public OrderCreationDate(DateTime creationDayTime)
+    private OrderCreationDate(DateTime creationDayTime)
     {
         if (creationDayTime == DateTime.MinValue || creationDayTime == DateTime.MaxValue)
             throw new InvalidOrderCreationDateTimeDomainException("Order with invalid date");
-        Value = creationDayTime;
+        UtcValue = creationDayTime.SetKindUtc();
     }
 
-    protected override IEnumerable<object?> GetEqualityComponents() => new object[] { Value };
+    public static OrderCreationDate FromUtc(DateTime utcTime) => new(utcTime);
+
+    protected override IEnumerable<object?> GetEqualityComponents() => new object[] { UtcValue };
 }

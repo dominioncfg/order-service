@@ -1,20 +1,21 @@
-using FluentAssertions;
-using OrderService.Api.Features.Orders;
-using OrderService.Api.FunctionalTests.SeedWork;
-using OrderService.Api.FunctionalTests.Shared;
-using OrderService.Contracts;
-using OrderService.Domain.Orders;
-using OrderService.Tests.Common.Builders;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+
+using OrderService.Contracts.Events.Integration;
 
 namespace OrderService.Api.FunctionalTests.Features.Orders;
 
 [Collection(nameof(TestServerFixtureCollection))]
 public class WhenCreatingOrders
 {
+    private readonly Guid Id = Guid.NewGuid();
+    private readonly Guid BuyerId = Guid.NewGuid();
+    private readonly DateTime CreationDateTime = new DateTime(2020, 10, 02).At(03, 00);
+    private const string Sku = "prod01";
+    private const decimal UnitPrice = 10;
+    private const int Quantity = 1;
+    private const string AddressCountry = "Spain";
+    private const string AddressCity = "Madrid";
+    private const string AddressStreet = "Gran Via";
+    private const string AddressNumber = "55";
     private readonly TestServerFixture Given;
 
     public WhenCreatingOrders(TestServerFixture given)
@@ -24,83 +25,22 @@ public class WhenCreatingOrders
 
     [Fact]
     [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Id_Is_Not_Valid()
+    public async Task CanCreateOrderWithSingleItem()
     {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(default)
-            .WithItem(item=>item
-                .WithSku("product-sku-01")
-                .WithQuantity(2))
-            .Build();
-
-        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
-    }
-
-    [Fact]
-    [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Order_Has_No_Items()
-    {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .Build();
-
-        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
-    }
-
-    [Fact]
-    [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Negative_Quantity()
-    {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item=> item
-                .WithSku("product-sku-01")
-                .WithQuantity(-2)
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = new CreateOrderApiRequestBuilder()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
             )
-            .Build();
-
-        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
-    }
-
-    [Fact]
-    [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Zero_Quantity()
-    {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item=>item
-                .WithSku("product-sku-01")
-                .WithQuantity(0)
-            )
-            .Build();
-
-        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
-    }
-
-    [Fact]
-    [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Order_Has_Items_With_Empty_SKU()
-    {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item=>item
-                .WithSku(string.Empty)
-                .WithQuantity(2)
-            )
-            .Build();
-
-        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
-    }
-
-    [Fact]
-    [ResetApplicationState]
-    public async Task Can_Create_Order_With_Single_Item()
-    {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
             .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(2)
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
+                .WithQuantity(Quantity)
             )
             .Build();
 
@@ -108,22 +48,32 @@ public class WhenCreatingOrders
 
         var ordersInDb = await Given.GetAllOrdersInRepository();
         ordersInDb.Should().NotBeNull().And.HaveCount(1);
-        AssertOrderFromRequest(ordersInDb.First(), request);
+        AssertOrderFromRequest(ordersInDb.First(), request, CreationDateTime);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task Can_Create_Order_With_Two_Items()
+    public async Task CanCreateOrderWithTwoItems()
     {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(2)
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = new CreateOrderApiRequestBuilder()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
             )
             .WithItem(item => item
-                .WithSku("product-sku-02")
-                .WithQuantity(3)
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
+                .WithQuantity(Quantity)
+            )
+            .WithItem(item => item
+                .WithSku("prod02")
+                .WithUnitPrice(UnitPrice + 1)
+                .WithQuantity(Quantity + 2)
             )
             .Build();
 
@@ -131,28 +81,42 @@ public class WhenCreatingOrders
 
         var ordersInDb = await Given.GetAllOrdersInRepository();
         ordersInDb.Should().NotBeNull().And.HaveCount(1);
-        AssertOrderFromRequest(ordersInDb.First(), request);
+        AssertOrderFromRequest(ordersInDb.First(), request, CreationDateTime);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task Can_Create_Order_When_Another_Order_Database_Exist()
+    public async Task CanCreateOrderWhenAnotherOrderAlreadyExists()
     {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(2)
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = new CreateOrderApiRequestBuilder()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
             )
             .WithItem(item => item
-                .WithSku("product-sku-02")
-                .WithQuantity(3)
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
+                .WithQuantity(Quantity)
             )
             .Build();
         var existingOrder = new OrderBuilder()
             .WithId(Guid.NewGuid())
+            .WithBuyerId(Guid.NewGuid())
+            .WithCreationDateTime(CreationDateTime.AddHours(-1))
+            .WithAddress(address => address
+                .WithCountry("Spain")
+                .WithCity("Barcelone")
+                .WithStreet("Diagonal")
+                .WithNumber("20")
+            )
             .WithItem(item => item
                 .WithSku("product-sku-02")
+                .WithUnitPrice(2)
                 .WithQuantity(4)
             )
             .Build();
@@ -164,32 +128,47 @@ public class WhenCreatingOrders
         ordersInDb.Should().NotBeNull().And.HaveCount(2);
         var theOrder = ordersInDb.FirstOrDefault(x => x.Id == request.Id);
         theOrder.Should().NotBeNull();
-        AssertOrderFromRequest(theOrder!, request);
+        AssertOrderFromRequest(theOrder!, request, CreationDateTime);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Id_Already_Exists()
+    public async Task ReturnsBadRequestWhenIdAlreadyExists()
     {
-        var existingId = Guid.NewGuid();
-        var request = new CreateOrderRequestBuilder()
-            .WithId(existingId)
-            .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(2)
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var existingOrder = new OrderBuilder()
+            .WithId(Id)
+            .WithBuyerId(Guid.NewGuid())
+            .WithCreationDateTime(CreationDateTime.AddHours(-1))
+            .WithAddress(address => address
+                .WithCountry("Spain")
+                .WithCity("Barcelone")
+                .WithStreet("Diagonal")
+                .WithNumber("20")
             )
             .WithItem(item => item
                 .WithSku("product-sku-02")
-                .WithQuantity(3)
-            )
-            .Build();
-        var existingOrder = new OrderBuilder()
-            .WithId(existingId)
-            .WithItem(item => item
-                .WithSku("product-sku-03")
+                .WithUnitPrice(2)
                 .WithQuantity(4)
             )
             .Build();
+
+        var request = new CreateOrderApiRequestBuilder()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
+            )
+            .WithItem(item => item
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
+                .WithQuantity(Quantity)
+            )
+            .Build();
+
         await Given.AssumeOrderInRepository(existingOrder);
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
@@ -197,15 +176,24 @@ public class WhenCreatingOrders
 
     [Fact]
     [ResetApplicationState]
-    public async Task Sends_Event_When_Order_Is_Created()
+    public async Task SendsEventWhenOrderIsCreated()
     {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(3)
-            )
-            .Build();
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = new CreateOrderApiRequestBuilder()
+           .WithId(Id)
+           .WithBuyerId(BuyerId)
+           .WithAddress(address => address
+               .WithCountry(AddressCountry)
+               .WithCity(AddressCity)
+               .WithStreet(AddressStreet)
+               .WithNumber(AddressNumber)
+           )
+           .WithItem(item => item
+               .WithSku(Sku)
+               .WithUnitPrice(UnitPrice)
+               .WithQuantity(Quantity)
+           )
+           .Build();
 
         await Given.Server.CreateClient().PostAndExpectCreatedAsync(PostCreateUrl(), request);
 
@@ -214,32 +202,44 @@ public class WhenCreatingOrders
         var events = Given.GetPublishedEventsOfType<OrderCreatedIntegrationEvent>();
         ordersInDb.Should().NotBeNull().And.HaveCount(1);
         events.Should().NotBeNull().And.HaveCount(1);
-        AssertOrderFromRequest(ordersInDb.First(), request);
-        AssertEventFromRequet(events.First(), request);
+        AssertOrderFromRequest(ordersInDb.First(), request, CreationDateTime);
+        AssertEventFromRequest(events.First(), request);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task OrderItems_With_Same_Sku_Are_Combined()
+    public async Task OrderItemsWithSameSkuAreCombined()
     {
-        var differentSku = "product-sku-02";
-        var differentSkuQuantity = 2;
-        var skuToBeCombined = "product-sku-01";
-        var skuToBeCombinedSkuQuantity1 = 3;
-        var skuToBeCombinedSkuQuantity2 = 4;
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku(differentSku)
-                .WithQuantity(differentSkuQuantity)
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var skuToBeCombinedSkuQuantity1 = Quantity;
+        var skuToBeCombinedSkuQuantity2 = Quantity + 2;
+        var differentSku = "prod02";
+        var differentUnitPrice = UnitPrice + 2;
+        var differentSkuQuantity = Quantity + 4;
+
+        var request = new CreateOrderApiRequestBuilder()
+            .WithId(Id)
+            .WithBuyerId(BuyerId)
+            .WithAddress(address => address
+                .WithCountry(AddressCountry)
+                .WithCity(AddressCity)
+                .WithStreet(AddressStreet)
+                .WithNumber(AddressNumber)
             )
             .WithItem(item => item
-                .WithSku(skuToBeCombined)
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
                 .WithQuantity(skuToBeCombinedSkuQuantity1)
             )
             .WithItem(item => item
-                .WithSku(skuToBeCombined)
+                .WithSku(Sku)
+                .WithUnitPrice(UnitPrice)
                 .WithQuantity(skuToBeCombinedSkuQuantity2)
+            )
+            .WithItem(item => item
+                .WithSku(differentSku)
+                .WithUnitPrice(differentUnitPrice)
+                .WithQuantity(differentSkuQuantity)
             )
             .Build();
 
@@ -250,49 +250,55 @@ public class WhenCreatingOrders
         var orderInDb = ordersInDb.First();
 
         orderInDb.Id.Should().Be(request.Id);
+        orderInDb.CreationDateTime.UtcValue.Should().Be(CreationDateTime);
         orderInDb.Items.Should().HaveCount(2);
 
-        var differentSkuOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku == differentSku);
+        var differentSkuOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku.Value == differentSku);
         differentSkuOrderItem.Should().NotBeNull();
-        differentSkuOrderItem!.Quantity.Should().Be(differentSkuQuantity);
+        differentSkuOrderItem!.UnitPrice.PriceInEuros.Should().Be(differentUnitPrice);
+        differentSkuOrderItem!.Quantity.Value.Should().Be(differentSkuQuantity);
 
-        var combinedOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku == skuToBeCombined);
+        var combinedOrderItem = orderInDb.Items.FirstOrDefault(x => x.Sku.Value == Sku);
         combinedOrderItem.Should().NotBeNull();
-        combinedOrderItem!.Quantity.Should().Be(skuToBeCombinedSkuQuantity1 + skuToBeCombinedSkuQuantity2);
+        combinedOrderItem!.UnitPrice.PriceInEuros.Should().Be(UnitPrice);
+        combinedOrderItem!.Quantity.Value.Should().Be(skuToBeCombinedSkuQuantity1 + skuToBeCombinedSkuQuantity2);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task Returns_Bad_Request_When_Any_OrderItem_Has_Zero_Quantity_Even_If_Could_Be_Combined()
+    public async Task ReturnsBadRequestWhenAnyOrderItemHasZeroQuantityEvenIfCouldBeCombined()
     {
-        var skuToBeCombined = "product-sku-01";
-        
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = new CreateOrderApiRequestBuilder()
+           .WithId(Id)
+           .WithBuyerId(BuyerId)
+           .WithAddress(address => address
+               .WithCountry(AddressCountry)
+               .WithCity(AddressCity)
+               .WithStreet(AddressStreet)
+               .WithNumber(AddressNumber)
+           )
+           .WithItem(item => item
+               .WithSku(Sku)
+               .WithUnitPrice(UnitPrice)
+               .WithQuantity(Quantity)
+           )
             .WithItem(item => item
-                .WithSku(skuToBeCombined)
-                .WithQuantity(2)
-            )
-            .WithItem(item => item
-                .WithSku(skuToBeCombined)
-                .WithQuantity(0)
-            )
-            .Build();
+               .WithSku(Sku)
+               .WithUnitPrice(UnitPrice)
+               .WithQuantity(0)
+           )
+           .Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
     }
 
     [Fact]
     [ResetApplicationState]
-    public async Task Dont_Send_Event_When_Request_Is_Invalid()
+    public async Task DontSendEventWhenRequestIsInvalid()
     {
-        var request = new CreateOrderRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .WithItem(item => item
-                .WithSku("product-sku-01")
-                .WithQuantity(-1)
-            )
-            .Build();
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest().WithId(default).Build();
 
         await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
 
@@ -300,30 +306,183 @@ public class WhenCreatingOrders
         events.Should().NotBeNull().And.BeEmpty();
     }
 
-    private static void AssertOrderFromRequest(Order actual, CreateOrderApiRequest expected)
+    #region Fluent Validation 
+    // All of this tests are replicated from the OrderService.Application.UnitTests so we could leave just one to make sure FluentValidation is in place
+    // But it also can be interesting to have integration tests with all validations.
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderIdIsNotValid()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+            .WithId(default)
+            .Build();
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenBuyerIdIsNotValid()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+            .WithBuyerId(default)
+            .Build();
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasNoItems()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+             .WithNoItems()
+             .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasItemsWithNegativeQuantity()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+            .WithItem(item => item
+                .WithSku("prod02")
+                .WithUnitPrice(UnitPrice)
+                .WithQuantity(-2)
+            )
+            .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasItemsWithNegativeUnitPrice()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+            .WithItem(item => item
+                .WithSku("prod02")
+                .WithUnitPrice(-1)
+                .WithQuantity(Quantity)
+            )
+            .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasItemsWithZeroQuantity()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+             .WithItem(item => item
+                 .WithSku("prod02")
+                 .WithUnitPrice(UnitPrice)
+                 .WithQuantity(0)
+             )
+             .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasItemsWithZeroUnitPrice()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+             .WithItem(item => item
+                 .WithSku("prod02")
+                 .WithUnitPrice(0)
+                 .WithQuantity(Quantity)
+             )
+             .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+
+    [Fact]
+    [ResetApplicationState]
+    public async Task ReturnsBadRequestWhenOrderHasItemsWithEmptySKU()
+    {
+        Given.AssumeClockUtcNowAt(CreationDateTime);
+        var request = ValidRequest()
+             .WithItem(item => item
+                 .WithSku(string.Empty)
+                 .WithUnitPrice(UnitPrice)
+                 .WithQuantity(Quantity)
+             )
+             .Build();
+
+        await Given.Server.CreateClient().PostAndExpectBadRequestAsync(PostCreateUrl(), request);
+    }
+    #endregion
+
+    private static void AssertOrderFromRequest(Order actual, CreateOrderApiRequest expected, DateTime ocurredAt)
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
+        actual.BuyerId.Should().Be(expected.BuyerId);
+        actual.CreationDateTime.UtcValue.Should().Be(ocurredAt);
+
+        actual.Address.Should().NotBeNull();
+        actual.Address.Country.Should().Be(expected.Address.Country);
+        actual.Address.City.Should().Be(expected.Address.City);
+        actual.Address.Street.Should().Be(expected.Address.Street);
+        actual.Address.Number.Should().Be(expected.Address.Number);
+
         actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count());
         foreach (var item in actual.Items)
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
             corresponding.Should().NotBeNull();
             item.Quantity.Should().Be(corresponding!.Quantity);
+            item.UnitPrice.Should().Be(corresponding!.UnitPrice);
         }
     }
 
-    private static void AssertEventFromRequet(OrderCreatedIntegrationEvent actual, CreateOrderApiRequest expected)
+    private static void AssertEventFromRequest(OrderCreatedIntegrationEvent actual, CreateOrderApiRequest expected)
     {
         actual.Should().NotBeNull();
         actual.Id.Should().Be(expected.Id);
+        actual.BuyerId.Should().Be(expected.BuyerId);
+
+        actual.Address.Should().NotBeNull();
+        actual.Address.Country.Should().Be(expected.Address.Country);
+        actual.Address.City.Should().Be(expected.Address.City);
+        actual.Address.Street.Should().Be(expected.Address.Street);
+        actual.Address.Number.Should().Be(expected.Address.Number);
         actual.Items.Should().NotBeNull().And.HaveCount(expected.Items.Count());
         foreach (var item in actual.Items)
         {
             var corresponding = actual.Items.FirstOrDefault(x => x.Sku == item.Sku);
             corresponding.Should().NotBeNull();
             item.Quantity.Should().Be(corresponding!.Quantity);
+            item.UnitPrice.Should().Be(corresponding!.UnitPrice);
         }
+    }
+    private CreateOrderApiRequestBuilder ValidRequest()
+    {
+        return new CreateOrderApiRequestBuilder()
+           .WithId(Id)
+           .WithBuyerId(BuyerId)
+           .WithAddress(address => address
+               .WithCountry(AddressCountry)
+               .WithCity(AddressCity)
+               .WithStreet(AddressStreet)
+               .WithNumber(AddressNumber)
+           )
+           .WithItem(item => item
+               .WithSku(Sku)
+               .WithUnitPrice(UnitPrice)
+               .WithQuantity(Quantity)
+           );
     }
 
     private static string PostCreateUrl() => "api/orders";

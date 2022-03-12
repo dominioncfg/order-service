@@ -1,10 +1,8 @@
 ﻿using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.Common.Exceptions;
-using System;
 
 namespace OrderService.Api.Configuration;
 

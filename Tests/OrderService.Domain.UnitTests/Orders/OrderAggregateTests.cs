@@ -35,7 +35,7 @@ public class OrderAggregateTests
 
         order.Id.Should().Be(Id);
         order.BuyerId.Should().Be(BuyerId);
-        order.CreationDateTime.Value.Should().Be(CreationDateTime);
+        order.CreationDateTime.UtcValue.Should().Be(CreationDateTime);
 
         order.Address.Should().NotBeNull();
         order.Address.Country.Should().Be(AddressCountry);
@@ -47,7 +47,7 @@ public class OrderAggregateTests
         var orderItem = order.Items.Single();
         orderItem.Id.Should().NotBeEmpty();
         orderItem.Sku.Value.Should().Be(Sku);
-        orderItem.UnitPrice.Value.Should().Be(UnitPrice);
+        orderItem.UnitPrice.PriceInEuros.Should().Be(UnitPrice);
         orderItem.Quantity.Value.Should().Be(Quantity);
     }
 
@@ -80,7 +80,7 @@ public class OrderAggregateTests
         createdEvent.OrderId.Should().Be(Id);
 
         createdEvent.BuyerId.Should().Be(BuyerId);
-        createdEvent.CreationDateTime.Value.Should().Be(CreationDateTime);
+        createdEvent.CreationDateTime.UtcValue.Should().Be(CreationDateTime);
 
         createdEvent.Address.Should().NotBeNull();
         createdEvent.Address.Country.Should().Be(AddressCountry);

@@ -1,11 +1,10 @@
-﻿using OrderService.Api.Features.Orders;
-
-namespace OrderService.Api.FunctionalTests.Features.Orders;
+﻿namespace OrderService.Api.FunctionalTests.Features.Orders;
 
 public class CreateOrderItemApiRequestBuilder
 {
     private string sku = string.Empty;
-    private decimal quantity;
+    private decimal unitPrice;
+    private int quantity;
 
     public CreateOrderItemApiRequestBuilder WithSku(string sku)
     {
@@ -13,11 +12,21 @@ public class CreateOrderItemApiRequestBuilder
         return this;
     }
 
-    public CreateOrderItemApiRequestBuilder WithQuantity(decimal quantity)
+    public CreateOrderItemApiRequestBuilder WithQuantity(int quantity)
     {
         this.quantity = quantity;
         return this;
     }
+    public CreateOrderItemApiRequestBuilder WithUnitPrice(decimal unitPrice)
+    {
+        this.unitPrice = unitPrice;
+        return this;
+    }
 
-    public CreateOrderItemApiRequest Build() => new() { Sku = sku, Quantity = quantity };
+    public CreateOrderItemApiRequest Build() => new()
+    {
+        Sku = sku,
+        UnitPrice = unitPrice,
+        Quantity = quantity
+    };
 }

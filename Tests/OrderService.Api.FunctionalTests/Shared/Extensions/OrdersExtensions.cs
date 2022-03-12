@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OrderService.Api.FunctionalTests.SeedWork;
-using OrderService.Domain.Orders;
 using OrderService.Infrastructure;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace OrderService.Api.FunctionalTests.Shared;
 

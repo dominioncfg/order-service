@@ -16,21 +16,21 @@ public class Order : AggregateRoot<Guid>
 
     public Order(CreateOrderArgs args) : base(args.Id)
     {
-        var buyerId = args.BuyerId;
         var id = args.Id;
+        var buyerId = args.BuyerId;
         var orderItemsArgs = args.Items;
-        var creationDate = args.CreationDateTime;
+        var creationDate = args.CreationDateTimeUtc;
         var addressArgs = args.Address;
-        
+
         if (id == default)
             throw new InvalidOrderIdDomainException("Order Id has a default value");
-        
+
         if (buyerId == default)
             throw new InvalidOrderBuyerIdDomainException("Buyer is required");
 
         if (addressArgs == null)
-             throw new OrderWithoutAdressDomainException("You are trying to create an order without corresponding address");
-        
+            throw new OrderWithoutAdressDomainException("You are trying to create an order without corresponding address");
+
         if (orderItemsArgs is null || !orderItemsArgs.Any())
             throw new OrderWithNoItemsException($"Order '{id}' has no items");
 
@@ -38,7 +38,7 @@ public class Order : AggregateRoot<Guid>
 
         BuyerId = buyerId;
         Status = OrderStatus.Submitted;
-        CreationDateTime = new(creationDate);
+        CreationDateTime = OrderCreationDate.FromUtc(creationDate);
         Address = new(addressArgs.Country, addressArgs.City, addressArgs.Street, addressArgs.Number);
 
         foreach (var orderItem in orderItems)

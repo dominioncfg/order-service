@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using OrderService.Application.Features.Orders;
+﻿using OrderService.Application.Features.Orders;
 
 namespace OrderService.Api.Features.Orders;
 
@@ -28,6 +27,7 @@ public class OrdersControllerProfile : Profile
     private void MapCreate()
     {
         CreateMap<CreateOrderApiRequest, CreateOrderCommand>();
+        CreateMap<CreateOrderAddressApiRequest, CreateOrderCommandAddress>();
         CreateMap<CreateOrderItemApiRequest, CreateOrderCommandItem>();
     }
 }

@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using OrderService.Api.Common;
-using OrderService.Application.Features.Orders;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using OrderService.Application.Features.Orders;
 
 namespace OrderService.Api.Features.Orders;
 

@@ -2,14 +2,16 @@
 
 public class OrderItemUnitPrice : ValueObject
 {
-    public decimal Value { get; }
+    public decimal PriceInEuros { get; }
 
     public OrderItemUnitPrice(decimal price)
     {
         if (price <= 0)
             throw new InvalidPriceDomainException($"{price} is an invalid price.");
-        Value = price;
+        PriceInEuros = price;
     }
 
-    protected override IEnumerable<object?> GetEqualityComponents() => new object[] { Value };
+    public static OrderItemUnitPrice FromEuros(decimal euros) => new(euros);
+
+    protected override IEnumerable<object?> GetEqualityComponents() => new object[] { PriceInEuros };
 }

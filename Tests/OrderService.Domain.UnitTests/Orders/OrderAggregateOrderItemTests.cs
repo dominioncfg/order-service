@@ -54,12 +54,12 @@ public class OrderAggregateOrderItemTests
 
         var differentSkuOrderItem = order.Items.FirstOrDefault(x => x.Sku.Value == Sku);
         differentSkuOrderItem.Should().NotBeNull();
-        differentSkuOrderItem!.UnitPrice.Value.Should().Be(UnitPrice);
+        differentSkuOrderItem!.UnitPrice.PriceInEuros.Should().Be(UnitPrice);
         differentSkuOrderItem!.Quantity.Value.Should().Be(Quantity);
 
         var combinedOrderItem = order.Items.FirstOrDefault(x => x.Sku.Value == skuToBeCombined);
         combinedOrderItem.Should().NotBeNull();
-        combinedOrderItem!.UnitPrice.Value.Should().Be(skuToBeCombinedUnitPrice);
+        combinedOrderItem!.UnitPrice.PriceInEuros.Should().Be(skuToBeCombinedUnitPrice);
         combinedOrderItem!.Quantity.Value.Should().Be(skuToBeCombinedSkuQuantity1 + skuToBeCombinedSkuQuantity2);
     }
 
@@ -182,7 +182,7 @@ public class OrderAggregateOrderItemTests
                  .WithUnitPrice(differentUnitPrice)
                  .WithQuantity(Quantity)
              );
-       
+
         var action = () => order.Build();
 
         action.Should().Throw<OrderItemsWithDifferentPricesDomainException>();

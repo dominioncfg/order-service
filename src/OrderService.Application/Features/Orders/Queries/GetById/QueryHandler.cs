@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using OrderService.Application.Common.Exceptions;
-using OrderService.Domain.Orders;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public record GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, GetOrderByIdQueryResponse>
 {

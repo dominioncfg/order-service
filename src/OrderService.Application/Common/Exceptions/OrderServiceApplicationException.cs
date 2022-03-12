@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OrderService.Application.Common.Exceptions;
+﻿namespace OrderService.Application.Common.Exceptions;
 
 [Serializable]
 public class OrderServiceApplicationException : Exception

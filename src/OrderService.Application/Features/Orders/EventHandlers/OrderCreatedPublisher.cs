@@ -1,11 +1,4 @@
 ﻿using MassTransit;
-using MediatR;
-using OrderService.Contracts;
-using OrderService.Domain.Orders;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace OrderService.Application.Features.Orders;
 
 public class OrderCreatedPublisher : INotificationHandler<OrderCreatedDomainEvent>
@@ -15,13 +8,15 @@ public class OrderCreatedPublisher : INotificationHandler<OrderCreatedDomainEven
 
     public OrderCreatedPublisher(IPublishEndpoint publishEndpoint)
     {
-        this._publishEndpoint = publishEndpoint;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task Handle(OrderCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        var mappedItems = domainEvent.Items.Select(x => new OrderCreatedOrderItemDto(x.Sku, x.Quantity)).ToArray();
-        var mappedEvent = new OrderCreatedIntegrationEvent(domainEvent.OrderId, mappedItems);
+        var mappedItems = domainEvent.Items.Select(x => new OrderCreatedIntegrationEventOrderItemDto(x.Sku, x.UnitPrice, x.Quantity)).ToArray();
+        var address = new OrderCreatedIntegrationEventAddressDto(domainEvent.Address.Country, domainEvent.Address.City,
+                                                                 domainEvent.Address.Street, domainEvent.Address.Number);
+        var mappedEvent = new OrderCreatedIntegrationEvent(domainEvent.OrderId, domainEvent.BuyerId, domainEvent.CreationDateTime.UtcValue, address, mappedItems);
         await _publishEndpoint.Publish(mappedEvent, cancellationToken);
     }
 }

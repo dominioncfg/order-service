@@ -3,6 +3,16 @@ namespace OrderService.Application.UnitTests.Features.Orders;
 
 public class WhenValidatingCreateOrderCommand
 {
+    private readonly Guid Id = Guid.NewGuid();
+    private readonly Guid BuyerId = Guid.NewGuid();
+    private const string Sku = "prod01";
+    private const decimal UnitPrice = 10;
+    private const int Quantity = 1;
+    private const string AddressCountry = "Spain";
+    private const string AddressCity = "Madrid";
+    private const string AddressStreet = "Gran Via";
+    private const string AddressNumber = "55";
+
     private readonly CreateOrderCommandValidator validator;
 
     public WhenValidatingCreateOrderCommand()
@@ -11,100 +21,214 @@ public class WhenValidatingCreateOrderCommand
     }
 
     [Fact]
-    public void Returns_No_Validation_Error_When_Request_Is_Valid()
+    public void ReturnsNoValidationErrorWhenRequestIsValid()
     {
-        var command = new CreateOrderCommand()
-        {
-            Id = Guid.NewGuid(),
-            Items = new CreateOrderCommandItem[]
-            {
-                    new CreateOrderCommandItem()
-                    {
-                        Sku =   "prod01",
-                        Quantity = 1,
-                    }
-            }
-
-        };
+        CreateOrderCommand command = ValidCommand();
+     
         var result = validator.TestValidate(command);
 
         result.ShouldNotHaveAnyValidationErrors();
-    }
-
+    }   
 
     [Fact]
-    public void Returns_Validations_Errors_For_All_Required_Properties()
+    public void ReturnsValidationsErrorsForAllRequiredProperties()
     {
         var command = new CreateOrderCommand();
         var result = validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Number);
         result.ShouldHaveValidationErrorFor(cmd => cmd.Items);
     }
 
     [Fact]
-    public void Returns_Validations_Errors_For_Invalid_Id()
+    public void ReturnsValidationsErrorsForInvalidId()
     {
-        var command = new CreateOrderCommand()
+        var command = ValidCommand() with
         {
-            Id = default,
-            Items = new CreateOrderCommandItem[]
-            {
-                    new CreateOrderCommandItem()
-                    {
-                        Sku =   "prod01",
-                        Quantity = 1,
-                    }
-            }
-
+            Id = default
         };
         var result = validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(cmd => cmd.Id);
+
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
         result.ShouldNotHaveValidationErrorFor(cmd => cmd.Items);
     }
 
     [Fact]
-    public void Returns_Validations_Errors_For_Invalid_SKU()
+    public void ReturnsValidationsErrorsForInvalidBuyerId()
     {
-        var command = new CreateOrderCommand()
+        var command = ValidCommand() with
         {
-            Id = Guid.NewGuid(),
-            Items = new CreateOrderCommandItem[]
-            {
-                    new CreateOrderCommandItem()
-                    {
-                        Sku =   string.Empty,
-                        Quantity = 1,
-                    }
-            }
-
+            BuyerId = default
         };
         var result = validator.TestValidate(command);
 
+        result.ShouldHaveValidationErrorFor(cmd => cmd.BuyerId);       
+
         result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
-        result.ShouldHaveValidationErrorFor(cmd => cmd.Items);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Items);
     }
 
     [Fact]
-    public void Returns_Validations_Errors_For_Invalid_Quantity()
+    public void ReturnsValidationsErrorsWhenNoAddress()
     {
-        var command = new CreateOrderCommand()
+        var command = ValidCommand() with
         {
-            Id = Guid.NewGuid(),
-            Items = new CreateOrderCommandItem[]
-            {
-                    new CreateOrderCommandItem()
-                    {
-                        Sku =   "prod01",
-                        Quantity = -1,
-                    }
-            }
+            Address = default!
+        };
+        var result = validator.TestValidate(command);
+        
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address);
+       
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Items);
+    }
 
+    [Fact]
+    public void ReturnsValidationsErrorsWhenAddressWithNoValues()
+    {
+        var command = ValidCommand() with
+        {
+            Address = new()
         };
         var result = validator.TestValidate(command);
 
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Address.Number);
+
         result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Items);
+    }
+
+    [Fact]
+    public void ReturnsValidationsErrorsForInvalidSKU()
+    {
+        var command = ValidCommand() with
+        {
+            Items = new CreateOrderCommandItem[]
+            {
+                new CreateOrderCommandItem()
+                {
+                    Sku =   String.Empty,
+                    UnitPrice = UnitPrice,
+                    Quantity = Quantity,
+                }
+            }
+        };
+        var result = validator.TestValidate(command);
+
         result.ShouldHaveValidationErrorFor(cmd => cmd.Items);
+
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ReturnsValidationsErrorsForNegativeUnitPrice(decimal invalidPrice)
+    {
+        var command = ValidCommand() with
+        {
+            Items = new CreateOrderCommandItem[]
+            {
+                new CreateOrderCommandItem()
+                {
+                    Sku =   Sku,
+                    UnitPrice = invalidPrice,
+                    Quantity = Quantity,
+                }
+            }
+        };
+        var result = validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Items);
+
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ReturnsValidationsErrorsForNegativeQuantity(int invalidQuantity)
+    {
+        var command = ValidCommand() with
+        {
+            Items = new CreateOrderCommandItem[]
+            {
+                new CreateOrderCommandItem()
+                {
+                    Sku =   Sku,
+                    UnitPrice = UnitPrice,
+                    Quantity = invalidQuantity,
+                }
+            }
+        };
+        var result = validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(cmd => cmd.Items);
+
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Id);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.BuyerId);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Country);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.City);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Street);
+        result.ShouldNotHaveValidationErrorFor(cmd => cmd.Address.Number);
+    }
+
+    private CreateOrderCommand ValidCommand()
+    {
+        return new CreateOrderCommand()
+        {
+            Id = Id,
+            BuyerId = BuyerId,
+            Address = new CreateOrderCommandAddress()
+            {
+                Country = AddressCountry,
+                City = AddressCity,
+                Street = AddressStreet,
+                Number = AddressNumber,
+            },
+            Items = new[]
+            {
+                new CreateOrderCommandItem()
+                {
+                    Sku =   Sku,
+                    UnitPrice = UnitPrice,
+                    Quantity = Quantity,
+                }
+            }
+        };
     }
 }

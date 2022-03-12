@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OrderService.Domain.Seedwork;
 using OrderService.Infrastructure;
-using System;
-using System.Threading.Tasks;
 
 namespace OrderService.Api.FunctionalTests.SeedWork;
+
 public sealed class TestServerFixture : IDisposable
 {
     public TestServer Server { get; }
@@ -35,6 +35,10 @@ public sealed class TestServerFixture : IDisposable
             {
                 webHost.UseTestServer();
                 webHost.UseStartup<Startup>();
+                webHost.ConfigureTestServices(services =>
+                {
+                    services.SwapSingleton<IClockService, MockClockService>(MockClockService.Service);
+                });
             });
 
         var host = hostBuilder.StartAsync().GetAwaiter().GetResult();
@@ -79,8 +83,14 @@ public sealed class TestServerFixture : IDisposable
     #region Reset Application State Between Test
     public static void OnTestInitResetApplicationState()
     {
+        OnTestInitResetApplicationServices();
         OnTestInitResetPostgresDb().GetAwaiter().GetResult();
         OnTestInitResetPublishedEvents().GetAwaiter().GetResult();
+    }
+
+    private static void OnTestInitResetApplicationServices()
+    {
+        MockClockService.ResetService();
     }
 
     private static async Task OnTestInitResetPublishedEvents()
@@ -104,4 +114,22 @@ public sealed class TestServerFixture : IDisposable
         });
     }
     #endregion
+}
+
+public static class ServiceCollectionExtension
+{
+    public static void SwapSingleton<TService, TImplementation>(this IServiceCollection services, TImplementation implementation)
+        where TImplementation : class, TService
+    {
+        var serviceDescriptors = services.Where(x => x.ServiceType == typeof(TService) && x.Lifetime == ServiceLifetime.Singleton).ToList();
+
+        if (!serviceDescriptors.Any())
+            throw new ArgumentException($"There is no original implementation for {nameof(TService)}.", nameof(TService));
+
+        foreach (var serviceDescriptor in serviceDescriptors)
+        {
+            services.Remove(serviceDescriptor);
+        }
+        services.AddSingleton(typeof(TService), implementation);
+    }
 }

@@ -11,5 +11,5 @@ public class OrderItemSku : ValueObject
         Value = sku;
     }
 
-    protected override IEnumerable<object?> GetEqualityComponents()=> new[] { Value };
+    protected override IEnumerable<object?> GetEqualityComponents() => new[] { Value };
 }

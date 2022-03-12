@@ -1,10 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using OrderService.Domain.Orders;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public record GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, GetAllOrdersQueryResponse>
 {

@@ -19,7 +19,7 @@ public record OrderCreatedDomainEvent : IDomainEvent
     public static OrderCreatedDomainEvent FromOrder(Order order)
     {
         var items = order.Items
-            .Select(x => new OrderCreatedOrderItemDomainEventDto(x.Id, x.Sku.Value, x.UnitPrice.Value, x.Quantity.Value))
+            .Select(x => new OrderCreatedOrderItemDomainEventDto(x.Id, x.Sku.Value, x.UnitPrice.PriceInEuros, x.Quantity.Value))
             .ToArray();
         return new OrderCreatedDomainEvent(order.Id, order.BuyerId, order.CreationDateTime,order.Address, items);
     }

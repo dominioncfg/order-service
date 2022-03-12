@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace OrderService.Api.Features.Orders;
+﻿namespace OrderService.Api.Features.Orders;
 
 public record GetAllOrdersQueryApiResponse
 {

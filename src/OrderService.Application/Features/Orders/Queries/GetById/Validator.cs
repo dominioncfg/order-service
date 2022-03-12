@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using System;
-
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public class GetOrderByIdQueryValidator : AbstractValidator<GetOrderByIdQuery>
 {

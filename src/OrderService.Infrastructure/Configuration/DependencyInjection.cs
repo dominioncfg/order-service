@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OrderService.Domain.Orders;
+using OrderService.Domain.Seedwork;
 using OrderService.Infrastructure.DbQueries;
 using OrderService.Infrastructure.Queries;
 using OrderService.Infrastructure.Repositories;
@@ -18,6 +19,7 @@ public static class DependencyInjection
         return services
             .AddDbContext(configuration)
             .AddRepositories()
+            .AddServices()
             .AddQueries(configuration);
     }
 
@@ -41,6 +43,12 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IOrdersRepository, OrdersRepository>();
+        return services;
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IClockService, ClockService>();
         return services;
     }
 

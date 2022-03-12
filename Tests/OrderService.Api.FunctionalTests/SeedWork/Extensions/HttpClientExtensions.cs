@@ -1,10 +1,7 @@
-﻿using FluentAssertions;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace OrderService.Api.FunctionalTests.SeedWork;
 

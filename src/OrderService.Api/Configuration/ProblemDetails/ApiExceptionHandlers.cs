@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using OrderService.Application.Common.Exceptions;
-using System;
 
 namespace OrderService.Api.Configuration;
 
