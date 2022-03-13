@@ -76,7 +76,6 @@ public class WhenQueryingOrdersByIds
         AssertOrderByIdApiResponse(response, existingOrder);
     }
 
-
     [Fact]
     [ResetApplicationState]
     public async Task ReturnsOrderWithMultipleItems()
@@ -156,8 +155,6 @@ public class WhenQueryingOrdersByIds
 
         AssertOrderByIdApiResponse(response, orderToBeReturned);
     }
-
-
 
     private static void AssertOrderByIdApiResponse(GetOrderByIdQueryApiResponse actual, Order expected)
     {

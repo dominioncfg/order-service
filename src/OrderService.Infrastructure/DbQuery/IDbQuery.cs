@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Infrastructure.DbQueries;
+﻿namespace OrderService.Infrastructure.DbQueries;
 
 public interface IDbQuery
 {

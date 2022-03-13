@@ -1,5 +1,4 @@
 ﻿namespace OrderService.Api.Features.Orders;
-
 public class OrdersControllerProfile : Profile
 {
     public OrdersControllerProfile()

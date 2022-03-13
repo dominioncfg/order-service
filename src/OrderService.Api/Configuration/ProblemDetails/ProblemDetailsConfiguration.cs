@@ -13,7 +13,6 @@ internal static class ProblemDetailsConfiguration
     private static string ErrorJsonContentType => "application/problem+json";
     private static string ErrorXmlContentType => "application/problem+xml";
 
-
     public static IServiceCollection ConfigureProblemDetails(this IServiceCollection services)
     {
         services.Configure<ApiBehaviorOptions>(options =>

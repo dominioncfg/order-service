@@ -1,12 +1,4 @@
-﻿using OrderService.Domain.Orders;
-using OrderService.Infrastructure.DbQueries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Infrastructure.Queries;
+﻿namespace OrderService.Infrastructure.Queries;
 public partial class OrdersQueries : IOrdersQueries
 {
     private readonly IOrdersDbQuery _dbQuery;

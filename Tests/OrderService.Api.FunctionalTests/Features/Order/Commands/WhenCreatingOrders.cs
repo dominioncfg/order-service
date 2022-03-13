@@ -1,4 +1,3 @@
-
 using OrderService.Contracts.Events.Integration;
 
 namespace OrderService.Api.FunctionalTests.Features.Orders;

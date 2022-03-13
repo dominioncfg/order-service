@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrderService.Domain.Orders;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Infrastructure.Repositories;
+﻿namespace OrderService.Infrastructure.Repositories;
 
 public class OrdersRepository : IOrdersRepository
 {

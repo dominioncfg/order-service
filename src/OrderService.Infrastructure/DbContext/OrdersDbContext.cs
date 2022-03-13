@@ -1,13 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Domain.Orders;
-using OrderService.Seedwork.Domain;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OrderService.Infrastructure;
+﻿namespace OrderService.Infrastructure;
 
 public class OrdersDbContext : DbContext
 {

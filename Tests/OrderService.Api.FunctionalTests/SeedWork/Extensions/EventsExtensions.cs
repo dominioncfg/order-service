@@ -2,9 +2,9 @@
 
 public static class EventsExtensions
 {
-    public static List<T> GetPublishedEventsOfType<T>(this TestServerFixture _) where T : class
+    public static List<T> GetPublishedEventsOfType<T>(this TestServerFixture given) where T : class
     {
-        var events = TestServerFixture.CurrentTestPublishedEvents!.Messages.Select<T>();
+        var events = given.CurrentTestPublishedEvents!.Messages.Select<T>();
         var eventMessages = events.Select(x => x.Context.Message).ToList();
         return eventMessages;
     }

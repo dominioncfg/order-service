@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OrderService.Infrastructure.Queries;
+﻿namespace OrderService.Infrastructure.Queries;
 
 public partial class OrdersQueries
 {

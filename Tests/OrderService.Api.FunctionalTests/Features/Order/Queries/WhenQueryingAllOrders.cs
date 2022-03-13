@@ -257,7 +257,5 @@ public class WhenQueryingAllOrders
         }
     }
 
-
-
     private static string GetOrdersUrl() => $"api/orders/";
 }

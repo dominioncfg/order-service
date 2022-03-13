@@ -12,7 +12,6 @@ internal static class ApiExceptionHandlers
     private static string NotFoundExceptionTitle => "Entity Not Found";
     private static string DomainExceptionTitle => "Fail to do the requested operation.";
 
-
     public static ProblemDetails UnhandledExceptionHandler(Exception ex)
     {
         return new ProblemDetails

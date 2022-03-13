@@ -112,7 +112,6 @@ public class WhenCancellingOrders
         await Given.Server.CreateClient().PutAndExpectNotFoundAsync(PutCancelUrl(unexistingOrderId));
     }
 
-
     [Fact]
     [ResetApplicationState]
     public async Task NoIntegrationEventIsPublishedWhenOperationFailed()
@@ -124,6 +123,7 @@ public class WhenCancellingOrders
         var events = Given.GetPublishedEventsOfType<OrderCanceledIntegrationEvent>();
         events.Should().NotBeNull().And.BeEmpty();
     }
+
     #region Fluent Validation 
     [Fact]
     [ResetApplicationState]
