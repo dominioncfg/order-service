@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.Common.Exceptions;
+using OrderService.Seedwork.Domain;
 
 namespace OrderService.Api.Configuration;
 
@@ -25,6 +26,7 @@ internal static class ProblemDetailsConfiguration
             opts.Map<ValidationException>(ApiExceptionHandlers.FluentValidationExceptionHandler);
             opts.Map<BadRequestApplicationException>(ApiExceptionHandlers.BadRequestExceptionHandler);
             opts.Map<EntityNotFoundApplicationException>(ApiExceptionHandlers.EntityNotFoundExceptionHandler);
+            opts.Map<DomainException>(ex => ApiExceptionHandlers.BaseDomainExceptionHandler(ex));
             opts.Map<Exception>(ex => ApiExceptionHandlers.UnhandledExceptionHandler(ex));
         });
         return services;

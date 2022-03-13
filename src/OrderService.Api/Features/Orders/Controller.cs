@@ -4,7 +4,7 @@
 public class OrdersController : ApiControllerBase
 {
     [HttpGet()]
-    public async Task<GetAllOrdersQueryApiResponse> GetByIdAsync(CancellationToken cancellationToken)
+    public async Task<GetAllOrdersQueryApiResponse> GetAllAsync(CancellationToken cancellationToken)
     {
         var query = new GetAllOrdersQuery();
         var queryResponse = await Mediator.Send(query, cancellationToken);
@@ -27,5 +27,29 @@ public class OrdersController : ApiControllerBase
         var command = Mapper.Map<CreateOrderCommand>(request);
         await Mediator.Send(command, cancellationToken);
         return CreatedAtAction("GetById", new { });
+    }
+
+    [HttpPut("{id}/pay")]
+    public async Task<ActionResult> PayAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new PayOrderCommand() { Id = id };
+        await Mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPut("{id}/ship")]
+    public async Task<ActionResult> ShipAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new ShipOrderCommand() { Id = id };
+        await Mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPut("{id}/cancel")]
+    public async Task<ActionResult> CancelAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new CancelOrderCommand() { Id = id };
+        await Mediator.Send(command, cancellationToken);
+        return NoContent();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OrderService.Application.Common.Exceptions;
+using OrderService.Seedwork.Domain;
 
 namespace OrderService.Api.Configuration;
 
@@ -9,6 +10,7 @@ internal static class ApiExceptionHandlers
     private static string ValidationExceptionTitle => "One or more validation failures have occurred.";
     private static string BadRequestExceptionTitle => "Looks like there is something wrong with your request.";
     private static string NotFoundExceptionTitle => "Entity Not Found";
+    private static string DomainExceptionTitle => "Fail to do the requested operation.";
 
 
     public static ProblemDetails UnhandledExceptionHandler(Exception ex)
@@ -48,6 +50,16 @@ internal static class ApiExceptionHandlers
             Detail = ex.Message,
             Status = StatusCodes.Status404NotFound,
             Title = NotFoundExceptionTitle,
+        };
+    }
+
+    public static ProblemDetails BaseDomainExceptionHandler(DomainException ex)
+    {
+        return new ValidationProblemDetails()
+        {
+            Detail = ex.Message,
+            Status = StatusCodes.Status400BadRequest,
+            Title = DomainExceptionTitle,
         };
     }
 }

@@ -2,6 +2,5 @@
 
 public interface IOrdersRepository: IAggregateRepository<Order,Guid>
 {
-
-    Task<Order?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken);
+    Task<Order?> GetByIdOrDefaultAsync(Guid id, CancellationToken cancellationToken);  
 }

@@ -4,7 +4,7 @@ public class Order : AggregateRoot<Guid>
 {
     public Guid BuyerId { get; }
     public OrderCreationDate CreationDateTime { get; }
-    public OrderStatus Status { get; }
+    public OrderStatus Status { get; private set; }
     public OrderAddress Address { get; }
     private readonly List<OrderItem> items = new();
 
@@ -73,5 +73,31 @@ public class Order : AggregateRoot<Guid>
             resultItems.Add(orderItem);
         }
         return resultItems;
+    }
+
+    public void MarkAsPaid()
+    {
+        if(!Status.CanChangeTo(OrderStatus.Paid))
+            throw new OrderCannotBePaidDomainException($"Order with status '{Status.Name}' cannot be paid.");
+
+        Status = OrderStatus.Paid;
+        AddDomainEvent(OrderPaidDomainEvent.FromOrder(this));
+    }
+    public void MarkAsShipped() 
+    {
+        if (!Status.CanChangeTo(OrderStatus.Shipped))
+            throw new OrderCannotBeShippedDomainException($"Order with status '{Status.Name}' cannot be shipped.");
+        
+        Status = OrderStatus.Shipped;
+        AddDomainEvent(OrderShippedDomainEvent.FromOrder(this));
+    }
+
+    public void Cancel() 
+    {
+        if (!Status.CanChangeTo(OrderStatus.Cancelled))
+            throw new OrderCannotBeCancelledDomainException($"Order with status '{Status.Name}' cannot be canncelled.");
+        
+        Status = OrderStatus.Cancelled;
+        AddDomainEvent(OrderCancelledDomainEvent.FromOrder(this));
     }
 }

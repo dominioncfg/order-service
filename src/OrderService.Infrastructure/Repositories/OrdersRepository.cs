@@ -27,5 +27,12 @@ public class OrdersRepository : IOrdersRepository
             .Orders
             .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-    }   
+    }
+
+    public async Task UpdateAsync(Order order, CancellationToken cancellationToken)
+    {
+        _ordersDbContext.Update(order);
+        //For more complex scenarios instead of using this we can call this from  a UnitOfWork
+        await _ordersDbContext.SaveChangesAsync(cancellationToken);
+    }
 }

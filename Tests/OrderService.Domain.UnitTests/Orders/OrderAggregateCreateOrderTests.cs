@@ -1,6 +1,8 @@
 ﻿namespace OrderService.Domain.UnitTests.Orders;
 
-public class OrderAggregateTests
+//Prefer functional test over unit test but if the domain logic is to complex or functional test is not posible then use UnitTests
+//Prefer test entire aggregates instead of independant classes
+public class OrderAggregateCreateOrderTests : OrderAggregateTestsBase
 {
     private readonly Guid Id = Guid.NewGuid();
     private readonly Guid BuyerId = Guid.NewGuid();

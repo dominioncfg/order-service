@@ -41,4 +41,26 @@ public static class HttpClientExtensions
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
+
+
+    public static async Task PutAndExpectNoContentAsync(this HttpClient client, string url)
+    {
+        var response = await client.PutAsync(url, null);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    public static async Task PutAndExpectNotFoundAsync(this HttpClient client, string url)
+    {
+        var response = await client.PutAsync(url, null);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    public static async Task PutAndExpectBadRequestAsync(this HttpClient client, string url)
+    {
+        var response = await client.PutAsync(url, null);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

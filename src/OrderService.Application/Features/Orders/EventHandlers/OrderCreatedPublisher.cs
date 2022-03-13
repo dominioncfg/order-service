@@ -13,6 +13,7 @@ public class OrderCreatedPublisher : INotificationHandler<OrderCreatedDomainEven
 
     public async Task Handle(OrderCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
+        //TODO: We could use automapper here
         var mappedItems = domainEvent.Items.Select(x => new OrderSubmitedIntegrationEventOrderItemDto(x.Sku, x.UnitPrice, x.Quantity)).ToArray();
         var address = new OrderSubmitedIntegrationEventAddressDto(domainEvent.Address.Country, domainEvent.Address.City,
                                                                  domainEvent.Address.Street, domainEvent.Address.Number);

@@ -1,19 +1,19 @@
 ﻿//This is a good place to do Fluent validation test to avoid doing many Integration test 
 namespace OrderService.Application.UnitTests.Features.Orders;
 
-public class WhenValidatingGetOrderByIdQuery
+public class WhenValidatingPayOrderCommand
 {
-    private readonly GetOrderByIdQueryValidator validator;
+    private readonly PayOrderCommandValidator validator;
 
-    public WhenValidatingGetOrderByIdQuery()
+    public WhenValidatingPayOrderCommand()
     {
-        validator = new GetOrderByIdQueryValidator();
+        validator = new PayOrderCommandValidator();
     }
 
     [Fact]
     public void ReturnsNoValidationErrorWhenRequestIsValid()
     {
-        var command = new GetOrderByIdQuery()
+        var command = new PayOrderCommand()
         {
             Id = Guid.NewGuid(),
         };
@@ -25,7 +25,7 @@ public class WhenValidatingGetOrderByIdQuery
     [Fact]
     public void ReturnsValidationsErrorsWhenIdIsInvalid()
     {
-        var command = new GetOrderByIdQuery() { Id = default };
+        var command = new PayOrderCommand() { Id = default };
         var result = validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(cmd => cmd.Id);
