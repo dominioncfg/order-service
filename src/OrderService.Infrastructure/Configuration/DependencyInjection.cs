@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using OrderService.Application.Common.Services;
 using OrderService.Infrastructure.Queries;
 using OrderService.Infrastructure.Repositories;
+using OrderService.Infrastructure.Services;
 
 namespace OrderService.Infrastructure.Configuration;
 
@@ -44,6 +46,7 @@ public static class DependencyInjection
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddSingleton<IClockService, ClockService>();
+        services.AddScoped<IMessageBus, MassTransitMessageBus>();
         return services;
     }
 

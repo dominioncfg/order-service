@@ -1,19 +1,17 @@
-﻿using MassTransit;
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public class OrderShippedPublisher : INotificationHandler<OrderShippedDomainEvent>
 {
-    //TODO: We could abstract MassTransit if we wanted to:
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IMessageBus _messageBus;
 
-    public OrderShippedPublisher(IPublishEndpoint publishEndpoint)
+    public OrderShippedPublisher(IMessageBus messageBus)
     {
-        _publishEndpoint = publishEndpoint;
+        _messageBus = messageBus;
     }
 
     public async Task Handle(OrderShippedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var integrationEvent = new OrderShippedIntegrationEvent(domainEvent.OrderId);
-        await _publishEndpoint.Publish(integrationEvent, cancellationToken);
+        await _messageBus.PublishEventAsync(integrationEvent, cancellationToken);
     }
 }

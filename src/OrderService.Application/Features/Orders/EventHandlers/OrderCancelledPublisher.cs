@@ -1,19 +1,17 @@
-﻿using MassTransit;
-namespace OrderService.Application.Features.Orders;
+﻿namespace OrderService.Application.Features.Orders;
 
 public class OrderCancelledPublisher : INotificationHandler<OrderCancelledDomainEvent>
 {
-    //TODO: We could abstract MassTransit if we wanted to:
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IMessageBus _messageBus;
 
-    public OrderCancelledPublisher(IPublishEndpoint publishEndpoint)
+    public OrderCancelledPublisher(IMessageBus messageBus)
     {
-        _publishEndpoint = publishEndpoint;
+        _messageBus = messageBus;
     }
 
     public async Task Handle(OrderCancelledDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var integrationEvent = new OrderCancelledIntegrationEvent(domainEvent.OrderId);
-        await _publishEndpoint.Publish(integrationEvent, cancellationToken);
+        await _messageBus.PublishEventAsync(integrationEvent, cancellationToken);
     }
 }
