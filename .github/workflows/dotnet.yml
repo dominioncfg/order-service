@@ -1,0 +1,32 @@
+name: Build Job
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Start Integration Tests Dependencies
+      run: docker-compose up --build --detach
+    
+    - name: Setup .NET 
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    
+    - name: .Net restore dependencies
+      run: dotnet restore
+    
+    - name: .Net Build
+      run: dotnet build --no-restore
+    
+    - name: .Net Test
+      run: dotnet test --no-build --verbosity normal
