@@ -2,7 +2,7 @@
 {
     public abstract class OrderAggregateTestsBase
     {
-        public Order GivenDefaultOrder(Guid id)
+        public static Order GivenDefaultOrder(Guid id)
         {
             var order = new OrderBuilder()
             .WithId(id)
@@ -23,14 +23,14 @@
             return order;
         }
 
-        public Order GivenDefaultCancelledOrder(Guid id)
+        public static Order GivenDefaultCancelledOrder(Guid id)
         {
             var order = GivenDefaultOrder(id);
             order.Cancel();
             return order;
         }
 
-        public Order GivenDefaultShippedOrder(Guid id)
+        public static Order GivenDefaultShippedOrder(Guid id)
         {
             var order = GivenDefaultOrder(id);
             order.MarkAsPaid();
@@ -38,7 +38,7 @@
             return order;
         }
 
-        public Order GivenDefaultPaidOrder(Guid id)
+        public static Order GivenDefaultPaidOrder(Guid id)
         {
             var order = GivenDefaultOrder(id);
             order.MarkAsPaid();

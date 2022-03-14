@@ -1,11 +1,11 @@
 ﻿namespace OrderService.Contracts.Events.Integration;
 
 //OrderService.Contracts could be published as an nuget for other microservices to consume
-public class OrderCanceledIntegrationEvent
+public class OrderCancelledIntegrationEvent
 {
     public Guid Id { get; }
 
-    public OrderCanceledIntegrationEvent(Guid id)
+    public OrderCancelledIntegrationEvent(Guid id)
     {
         Id = id;
     }

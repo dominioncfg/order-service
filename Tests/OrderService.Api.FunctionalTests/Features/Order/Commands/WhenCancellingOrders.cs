@@ -40,7 +40,7 @@ public class WhenCancellingOrders
         var order = ordersInDb.Single();
         order.Status.Should().NotBeNull().And.Be(OrderStatus.Cancelled);
 
-        var events = Given.GetPublishedEventsOfType<OrderCanceledIntegrationEvent>();
+        var events = Given.GetPublishedEventsOfType<OrderCancelledIntegrationEvent>();
         events.Should().NotBeNull().And.HaveCount(1);
         var integrationEvent = events.First();
         integrationEvent.Should().NotBeNull();
@@ -120,7 +120,7 @@ public class WhenCancellingOrders
 
         await Given.Server.CreateClient().PutAndExpectBadRequestAsync(PutCancelUrl(Id));
 
-        var events = Given.GetPublishedEventsOfType<OrderCanceledIntegrationEvent>();
+        var events = Given.GetPublishedEventsOfType<OrderCancelledIntegrationEvent>();
         events.Should().NotBeNull().And.BeEmpty();
     }
 

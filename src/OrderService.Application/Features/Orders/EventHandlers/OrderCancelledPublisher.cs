@@ -13,7 +13,7 @@ public class OrderCancelledPublisher : INotificationHandler<OrderCancelledDomain
 
     public async Task Handle(OrderCancelledDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        var integrationEvent = new OrderCanceledIntegrationEvent(domainEvent.OrderId);
+        var integrationEvent = new OrderCancelledIntegrationEvent(domainEvent.OrderId);
         await _publishEndpoint.Publish(integrationEvent, cancellationToken);
     }
 }

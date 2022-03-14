@@ -6,7 +6,7 @@ public class OrderSubmitedIntegrationEvent
     public Guid Id { get; }
     public Guid BuyerId { get; init; }
     public DateTime CreationDateTimeUtc { get; init; }
-    public OrderSubmitedIntegrationEventAddressDto Address { get; init; } = new();
+    public OrderSubmitedIntegrationEventAddressDto Address { get; init; }
     public OrderSubmitedIntegrationEventOrderItemDto[] Items { get; }
 
     public OrderSubmitedIntegrationEvent(Guid id, Guid buyerId, DateTime creationDateTime, OrderSubmitedIntegrationEventAddressDto address, OrderSubmitedIntegrationEventOrderItemDto[] items)
@@ -21,12 +21,11 @@ public class OrderSubmitedIntegrationEvent
 
 public class OrderSubmitedIntegrationEventAddressDto
 {
-    public string Country { get; } = string.Empty;
-    public string City { get; } = string.Empty;
-    public string Street { get; } = string.Empty;
-    public string Number { get; } = string.Empty;
+    public string Country { get; } 
+    public string City { get; } 
+    public string Street { get; }
+    public string Number { get; }
 
-    public OrderSubmitedIntegrationEventAddressDto() { }
 
     public OrderSubmitedIntegrationEventAddressDto(string country, string city, string street, string number)
     {
