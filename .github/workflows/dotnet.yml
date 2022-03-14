@@ -1,4 +1,4 @@
-name: .NET
+name: Build Job
 
 on:
   push:
@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Start Integration Tests Dependencies
+      run: docker-compose up --build --detach
     
     - name: Setup .NET 
       uses: actions/setup-dotnet@v1
