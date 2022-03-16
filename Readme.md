@@ -1,4 +1,4 @@
-# Order Service - Monolith
+# Order Service - Monolith [![Build Job](https://github.com/dominioncfg/order-service/actions/workflows/dotnet.yml/badge.svg)](https://github.com/dominioncfg/order-service/actions/workflows/dotnet.yml)
 
 Order service is clean architecture reference application built with .Net6.0.
 
