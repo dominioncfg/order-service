@@ -18,14 +18,14 @@ Order service is clean architecture reference application built with .Net6.0.
 - EntityFrameworkCore for generating DB schemas as well as easy persisting objects in db.
 - Dapper for faster queries.
 - Xunit as a test framework.
-- FluentAssertions for more readable assertions on test.
+- FluentAssertions for more readable assertions on tests.
 - Swagger for making easier to test all the endpoints.
 
 ## Some patterns used
 
 - DDD for having a business first design.
 - CQRS for reads and writes separation.
-- Builder Design Pattern heavily used on tests,
+- Builder Design Pattern heavily used on tests.
 
 ## Tests
 
@@ -33,17 +33,17 @@ This project contains both Unit and Integration Tests.
 
 ## Example use case
 
-The requirements are pretty straight forward, we have a system that handles order creation and manipulation and those orders can change their status in the fallowing manner:
+The requirements are pretty straight forward, we have a system that handles order creation and those orders can change their status in the fallowing manner:
 
 - Orders is Submitted (Created) => Orders is Paid => Order is Shipped.
 - In any given point in time orders can be cancelled to.
 - Whenever any of these changes happens, messages are published to inform potential external systems.
 
-The use cases are not a real live example they contain just enough information for demonstrating some DDD concepts like Aggregates, Entities, Value Objects, repositories etc.
+The use cases are not a real live example, there is just enough information for demonstrating some DDD concepts like Aggregates, Entities, Value Objects, repositories etc.
 
 ## Notes
 
-Although the example includes messaging is not intended to be a reference application for microservices, as it have missing important features like ApiGateways, BFF, Telemetry, Transient Fault Handling etc.
+Although the example includes messaging is not intended to be a reference application for microservices, as its missing important features like ApiGateways, BFF, Telemetry, Transient Fault Handling etc.
 
 Also note that one of the Project, OrderService.Consumer should not be considered part of example is only there for illustrating how a possible consumer should look like, its missing important features like testing.
 
@@ -61,4 +61,4 @@ docker-compose -p order-service-dev up --build --detach
 
 ## CI
 
-The example also includes a simple Github Action for checking pull request making sure that the code compiles and the test are valid before merging but is missing other features like test reporting, artifact generation etc.
+The example also includes a simple Github Action for checking pull request making sure that the code compiles and the test are valid before merging but is missing other features like test reporting, artifact generation, etc.
