@@ -11,6 +11,3 @@ docker-compose -p order-service-dev down --volumes
 
 ** Add new migration
 dotnet ef migrations add InitialOrderService --project src\OrderService.Infrastructure  --startup-project src\OrderService.Host -c OrdersDbContext -o Migrations
-
-
-	
